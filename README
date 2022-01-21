@@ -1,3 +1,5 @@
+Original README:
+
 A C++ implementation of the Nose-Hoover chain thermostat propagator
 is provided. The thermostat itself is described in the following
 papers:
