@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc libgrammar.a CMakeFiles/grammar.dir/extxyz/libextxyz/extxyz_kv_grammar.c.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib libgrammar.a

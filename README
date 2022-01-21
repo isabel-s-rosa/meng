@@ -1,0 +1,35 @@
+A C++ implementation of the Nose-Hoover chain thermostat propagator
+is provided. The thermostat itself is described in the following
+papers:
+
+  Phys. Rev. A 31, p.1695--1697 (1985); http://dx.doi.org/10.1103/PhysRevA.31.1695
+  "Canonical dynamics: Equilibrium phase-space distributions"
+  William G. Hoover
+
+  J. Chem. Phys. 81, p.511 (1984); http://dx.doi.org/10.1063/1.447334
+  "A unified formulation of the constant temperature molecular
+  dynamics methods"
+  Shuichi Nosé
+
+  J. Chem. Phys. 97, p.2635 (1992); http://dx.doi.org/10.1063/1.463940
+  "Nosé-Hoover chains: The canonical ensemble via continuous dynamics"
+  Glenn J. Martyna, Michael L. Klein and Mark Tuckerman
+
+The algorithms are from:
+
+  J. Phys. A: Math. Gen. 39 p.5629 (2006) http://dx.doi.org/10.1088/0305-4470/39/19/S18
+  "A Liouville-operator derived measure-preserving integrator for
+  molecular dynamics simulations in the isothermal--isobaric ensemble"
+  Mark E Tuckerman, José Alejandre, Roberto López-Rendón,
+  Andrea L Jochim and Glenn J Martyna
+
+An implementation of the barostat can be found in the 'npt-mtk.cpp' file
+(the program provides an implementation of the NPT integrator for the model
+1D potential from the paper above). It tabulates position, volume and
+number of other quantities along a trajectory. The 'npt/histogram.pl' scripts
+can used to compute a histogram of the volume. The histogram must match
+with the analytical expression that can be tabulated using the
+'npt/npt-analytical' program. The 'npt-analytical' uses GSL
+(GNU Scientific Library) and can be compiled as follows:
+
+g++ -O2 `pkg-config gsl --cflags --libs` -o npt-analytical npt-analytical.cpp

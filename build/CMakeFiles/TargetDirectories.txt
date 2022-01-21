@@ -1,0 +1,3 @@
+/Users/isabelrosa/Downloads/meng/build/CMakeFiles/npt-mtk.dir
+/Users/isabelrosa/Downloads/meng/build/CMakeFiles/edit_cache.dir
+/Users/isabelrosa/Downloads/meng/build/CMakeFiles/rebuild_cache.dir
