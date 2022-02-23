@@ -147,11 +147,6 @@ int main(int argc, char** argv)
     std::cout << "arrays" << std::endl;
     print_dict(arrays);
 
-    // int err_stat = extxyz_write_ll(stdout, nat, info, arrays);
-    // if (! strcmp(argv[2], "T")) {
-    //     std::cout << "written err_stat " << err_stat <<std::endl;
-    // }
-    // // Create a vector of inputs.
     std::vector<torch::jit::IValue> inputs;
     torch::Dict<std::string, torch::Tensor> dictionary;
 
@@ -169,188 +164,36 @@ int main(int argc, char** argv)
 	std::string str2 ("pos");
 	std::string str3 ("forces");
         if (entry->data_t == data_f && (str1.compare(str2) == 0 || str1.compare(str3) == 0)) {
-	    // std::cout << "HERE---------------------------------------------------" << std::endl;
-	    // std::cout << entry->key << std::endl;
-            // std::cout << (double*) (entry->data) << std::endl;
             torch::Tensor t = torch::from_blob((double*) entry->data, {rows, cols});
 	    if (str1.compare(str2) == 0) {
-                AtomGraph system(t, rows, 50.0);
+                AtomGraph system(t, rows, 5.0);
 		torch::Tensor edges = system.edges();
 		dictionary.insert("edge_index", edges);
 		std::cout << "Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
 	    }
-            // for (int i=0; i<rows; i++) {
-            //     for (int j=0; j<cols; j++) {
-            //         std::cout << "i: " << i << " j: " << j << std::endl;
-            //         std::cout << t[i][j] << std::endl;
-            //     }
-            // }
             dictionary.insert(entry->key, t);
        } else if (entry->data_t == data_s) {
             std::cout << (char**) (entry->data) << std::endl;
             int arr[cols];
             for (int j=0; j<cols; j++) {
                 std::string type(((char**) (entry->data))[j]);
-                std::cout << type << std::endl;
                 if (type == "Hf") {
                     arr[j] = 0;
                 } else if (type == "O") {
                     arr[j] = 1;
                 }
             }
-            // for (int j=0; j<cols; j++) {
-            //     std::cout << arr[j] << std::endl;
-            // }
-            // int data[] = {72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 8, 8 };
-            // int data[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1};
 	    auto options = torch::TensorOptions().dtype(torch::kInt32);
             torch::Tensor t = torch::from_blob(arr, {cols, 1}, options=options).to(torch::kInt64);
-	    std::cout << "printing atom types" << std::endl;
-            for (int i=0; i<cols; i++) {
-                for (int j=0; j<1; j++) {
-                    std::cout << "i: " << i << " j: " << j << std::endl;
-                    std::cout << t[i][j] << std::endl;
-                }
-            }
             dictionary.insert("atom_types", t);
         }
-
-    //     if (entry->data_t == data_i) {
-    //         std::cout << (int*) (entry->data) << std::endl;
-    //         torch::Tensor t = torch::from_blob((int*) entry->data, {rows, cols});
-    //         // for (int i=0; i<rows; i++) {
-    //         //     for (int j=0; j<cols; j++) {
-    //         //         std::cout << "i: " << i << " j: " << j << std::endl;
-    //         //         std::cout << t[i][j] << std::endl;
-    //         //     }
-    //         // }
-    //         dictionary.insert(entry->key, t);
-    //     } else if (entry->data_t == data_f) {
-    //         std::cout << (double*) (entry->data) << std::endl;
-    //         torch::Tensor t = torch::from_blob((double*) entry->data, {rows, cols});
-    //         // for (int i=0; i<rows; i++) {
-    //         //     for (int j=0; j<cols; j++) {
-    //         //         std::cout << "i: " << i << " j: " << j << std::endl;
-    //         //         std::cout << t[i][j] << std::endl;
-    //         //     }
-    //         // }
-    //         dictionary.insert(entry->key, t);
-    //     } else if (entry->data_t == data_b) {
-    //         std::cout << (int*) (entry->data) << std::endl;
-    //         torch::Tensor t = torch::from_blob((int*) entry->data, {rows, cols});
-    //         // for (int i=0; i<rows; i++) {
-    //         //     for (int j=0; j<cols; j++) {
-    //         //         std::cout << "i: " << i << " j: " << j << std::endl;
-    //         //         std::cout << t[i][j] << std::endl;
-    //         //     }
-    //         // }
-    //         dictionary.insert(entry->key, t);
-    //     } else if (entry->data_t == data_s) {
-    //         // std::cout << (char**) (entry->data) << std::endl;
-    //         // int arr[rows * cols];
-    //         // for (int j=0; j<cols; j++) {
-    //         //     std::string type(((char**) (entry->data))[j]);
-    //         //     std::cout << type << std::endl;
-    //         //     if (type == "Hf") {
-    //         //         arr[j] = 72;
-    //         //     } else if (type == "O") {
-    //         //         arr[j] = 8;
-    //         //     }
-    //         // }
-    //         // for (int j=0; j<cols; j++) {
-    //         //     std::cout << arr[j] << std::endl;
-    //         // }
-    //         int data[] = {72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 8, 8 };
-    //         torch::Tensor t = torch::from_blob(data, {rows, cols}).to(torch::kInt64);
-    //         for (int i=0; i<rows; i++) {
-    //             for (int j=0; j<cols; j++) {
-    //                 std::cout << "i: " << i << " j: " << j << std::endl;
-    //                 std::cout << t[i][j] << std::endl;
-    //             }
-    //         }
-    //         dictionary.insert("atom_types", t);
-    //     }
-    //     // dictionary.insert(entry->key, &(entry->data));
     }
-    // long data[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 0};
-    // torch::Tensor t = torch::from_blob(data, {2, 32}).to(torch::kInt64);
-    // torch::Tensor t = torch::randint(0, 1, {2, 31902}).to(torch::kLong);
-    // dictionary.insert("edge_index", t);
 
-    // // num edges: 31902
-    // // replacing with: 1857 ?
-    // torch::Tensor t = torch::randint(0, 1, {2, 1857}).to(torch::kLong); //repl
-    // dictionary.insert("edge_index", t);
-    // torch::Tensor t2 = torch::randn({1857, 3});
-    // dictionary.insert("pos", t2);
-    // torch::Tensor t3 = torch::randint(0, 1, {1857}).to(torch::kLong);
-    // dictionary.insert("batch", t3);
-    // // torch::Tensor t4 = torch::randint(0, 1, {51}).to(torch::kLong);
-    // // dictionary.insert("ptr", t4);
-    // torch::Tensor t5 = torch::randn({50, 3, 3}).to(torch::kLong); //used to not be kLong
-    // dictionary.insert("cell", t5);
-    // torch::Tensor t6 = torch::randn({1857, 3});
-    // dictionary.insert("forces", t6);
-    // torch::Tensor t7 = torch::randint(0, 1, {1857, 3}).to(torch::kLong); //repl
-    // dictionary.insert("edge_cell_shift", t7);
-    // // torch::Tensor t8 = torch::randint(0, 1, {50, 3}).to(torch::kBool);
-    // // dictionary.insert("pbc", t8);
-    // // torch::Tensor t9 = torch::randn({50, 1});
-    // // dictionary.insert("total_energy", t9);
-    // // torch::Tensor t10 = torch::randn({300});
-    // // dictionary.insert("stress", t10);
-    // // torch::Tensor t11 = torch::randn({50});
-    // // dictionary.insert("r_max", t11);
-    // torch::Tensor t12 = torch::randint(0, 1, {1857, 1}).to(torch::kLong);
-    // dictionary.insert("atom_types", t12);
-    // // torch::Tensor t13 = torch::randn({1857, 2});
-    // // dictionary.insert("node_attrs", t13);
-    // // torch::Tensor t14 = torch::randn({1857, 16});
-    // // dictionary.insert("node_features", t4);
-    // // torch::Tensor t15 = torch::randn({1857, 3}); //repl
-    // // dictionary.insert("edge_vectors", t15);
-    // // torch::Tensor t16 = torch::randn({1857, 9}); //repl
-    // // dictionary.insert("edge_attrs", t16);
-    // // torch::Tensor t17 = torch::randn({1857}); //repl
-    // // dictionary.insert("edge_lengths", t17);
-    // // torch::Tensor t18 = torch::randn({1857, 20}); //repl
-    // // dictionary.insert("edge_embedding", t18);
-    // torch::Tensor t19 = torch::randn({1857, 1});
-    // dictionary.insert("atomic_energy", t19);
-    // inputs.push_back(dictionary);
-
-    // num edges: 31902
-    // replacing with: 1857 ?
-    // replacing with: 32 ?
-    // torch::Tensor t = torch::randint(0, 1, {2, 50}).to(torch::kLong); //repl
-    // dictionary.insert("edge_index", t);
-    // torch::Tensor t2 = torch::randn({32, 3});
-    // dictionary.insert("pos", t2);
     torch::Tensor t3 = torch::randint(0, 1, {nat}).to(torch::kLong);
     dictionary.insert("batch", t3);
-    // torch::Tensor t5 = torch::randn({50, 3, 3}).to(torch::kLong); //used to not be kLong
-    // dictionary.insert("cell", t5);
-    // torch::Tensor t6 = torch::randn({32, 3});
-    // dictionary.insert("forces", t6);
-    // torch::Tensor t7 = torch::randint(0, 1, {32, 3}).to(torch::kLong); //repl
-    // dictionary.insert("edge_cell_shift", t7);
-    // torch::Tensor t12 = torch::randint(0, 1, {32, 1}).to(torch::kLong);
-    // dictionary.insert("atom_types", t12);
-    // torch::Tensor t19 = torch::randn({32, 1});
-    // dictionary.insert("atomic_energy", t19);
     inputs.push_back(dictionary);
-    // torch::Tensor t2 = dictionary.at("atom_types");
-    // std::cout << "ATOM TYPES:" << std::endl;
-    // for (int i=0; i<32; i++) {
-    //     for (int j=0; j<1; j++) {
-    //         std::cout << "i: " << i << " j: " << j << std::endl;
-    //         std::cout << t2[i][j] << std::endl;
-    //     }
-    // }
 
-    // 
-    // // Execute the model and turn its output into a tensor.
-    // std::cout << "before eval" << std::endl;
+    // Execute the model and turn its output into a tensor.
     module.eval();
     std::cout << "before forward" << std::endl;
     auto output = module.forward(inputs).toGenericDict();
@@ -379,28 +222,164 @@ int main(int argc, char** argv)
     float atomic_energy_sum = atomic_energy_tensor.sum().data_ptr<float>()[0];
     std::cout << "Atomic energy sum: " << atomic_energy_sum << std::endl;
 
-    // int num_atoms = 10;
-    // Node* positions = (Node*) malloc(num_atoms * sizeof(Node));
-    // for (int i = 0; i < num_atoms; i++) {
-    //     Pos pos = {0,0,static_cast<double>(i)};
-    //     Node node(pos);
-    //     positions[i] = node;
-    //     // std::cout << "here: " << positions[i].pos()[2] << std::endl;
-    // }
+    torch::Tensor new_pos = output.at("pos").toTensor();
 
-    // double r_cutoff = 3.0;
+    // physics stuff
+    float temp = 300.0;
+    float nvt_q = 334.0;
+    float dt = 0.5 * pow(10, -15); //femtoseconds?
+    float dtdt = pow(dt, 2);
+    float nvt_bath = 0.0;
+    torch::Tensor atom_types = output.at("atom_types").toTensor();
+    std::cout << "atom types: (" << atom_types.size(0) << ", " << atom_types.size(1) << ")" << std::endl;
+    float atom_masses[nat];
+    for (int i = 0; i < nat; i++) {
+        int atom_type = atom_types[i][0].item<int>();
+	if (atom_type == 0) {
+	    atom_masses[i] = 178.49;
+	} else {
+            atom_masses[i] = 15.999;
+	}
+    }
+    float velocities[nat][3];
+    memset(velocities, 0, nat*3*sizeof(float));
+    float modified_acc[nat][3];
+    for (int i = 0; i < nat; i++) {
+        for (int j = 0; j < 3; j++) {
+            modified_acc[i][j] = forces_tensor[i][j].item<float>() / atom_masses[i] - nvt_bath * velocities[i][j];
+	    if (modified_acc[i][j] != modified_acc[i][j]) {
+                modified_acc[i][j] = 0;
+	    }
+	}
+    }
+    float pos_fullstep[nat][3];
+    for (int i = 0; i < nat; i++) {
+        for (int j = 0; j < 3; j++) {
+            pos_fullstep[i][j] = new_pos[i][j].item<float>() + dt * velocities[i][j] + 0.5 * dtdt * modified_acc[i][j];
+	    if (pos_fullstep[i][j] != pos_fullstep[i][j]) {
+                pos_fullstep[i][j] = new_pos[i][j].item<float>();
+	    }
+	}
+    }
+    float vel_halfstep[nat][3];
+    for (int i = 0; i < nat; i++) {
+        for (int j = 0; j < 3; j++) {
+            vel_halfstep[i][j] = velocities[i][j] + 0.5 * dt * modified_acc[i][j];
+	    if (vel_halfstep[i][j] != vel_halfstep[i][j]) {
+                vel_halfstep[i][j] = 0;
+	    }
+	}
+    }
+    torch::Tensor pos_updated_after_physics = torch::from_blob(pos_fullstep, {nat, 3});
+    float kB = 1.380649 * pow(10, -4) / 1.602176634;
+    float e_kin_sum = 0;
+    for (int i = 0; i < nat; i++) {
+        float vel_sq_sum = 0;
+        for (int j = 0; j < 3; j++) {
+            vel_sq_sum += velocities[i][j] * velocities[i][j];
+        }
+        e_kin_sum += vel_sq_sum * atom_masses[i];
+    }
+    float e_kin_diff = 0.5 * (e_kin_sum - (3 * nat + 1) * kB * temp);
+    float nvt_bath_halfstep = nvt_bath + 0.5 * dt * e_kin_diff / nvt_q;
+    float e_kin_sum_halfstep = 0;
+    for (int i = 0; i < nat; i++) {
+        float vel_sq_sum_halfstep = 0;
+        for (int j = 0; j < 3; j++) {
+            vel_sq_sum_halfstep += vel_halfstep[i][j] * vel_halfstep[i][j];
+        }
+        e_kin_sum += vel_sq_sum_halfstep * atom_masses[i];
+    }
+    float e_kin_diff_halfstep = 0.5 * (e_kin_sum_halfstep - (3 * nat + 1) * kB * temp);
+    nvt_bath = nvt_bath_halfstep + 0.5 * dt * e_kin_diff_halfstep / nvt_q;
+    for (int i = 0; i < nat; i++) {
+        for (int j = 0; j < 3; j++) {
+            velocities[i][j] = vel_halfstep[i][j] + 0.5 * dt * (forces_tensor[i][j].item<float>() / atom_masses[i]);
+        }
+    }
 
-    // AtomGraph system(positions, num_atoms, r_cutoff);
-    // std::vector<int> V = system.vertices();
-    // std::vector<int> E = system.edges();
-    // for (int i = 0; i < V.size() - 1; i++) {
-    //     std::cout << "V: " << i << std::endl;
-    //     std::cout << "Index into E: " << V[i] << std::endl;
-    //     for (int j = V[i]; j < V[i+1]; j++) {
-    //         std::cout << "E: " << E[j] << std::endl;
-    //     }
-    //     std::cout << "--------------------------" << std::endl;
-    // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    std::vector<torch::jit::IValue> inputs2;
+    torch::Dict<std::string, torch::Tensor> dictionary2;
+
+    for (DictEntry *entry = arrays; entry; entry = entry->next) {
+        int rows = 1;
+        int cols = 1;
+        if (entry->nrows != 0) {
+            rows = entry->nrows;
+        }
+        if (entry->ncols != 0) {
+            cols = entry->ncols;
+        }
+        // std::cout << entry->key << std::endl;
+        AtomGraph system(pos_updated_after_physics, rows, 5.0);
+	torch::Tensor edges = system.edges();
+	dictionary2.insert("edge_index", edges);
+	std::cout << "SCOND ITME Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
+        dictionary2.insert("pos", pos_updated_after_physics);
+	dictionary2.insert("forces", forces_tensor);
+
+	std::string str1 (entry->key);
+        if (entry->data_t == data_s) {
+            std::cout << (char**) (entry->data) << std::endl;
+            int arr[cols];
+            for (int j=0; j<cols; j++) {
+                std::string type(((char**) (entry->data))[j]);
+                if (type == "Hf") {
+                    arr[j] = 0;
+                } else if (type == "O") {
+                    arr[j] = 1;
+                }
+            }
+	    auto options = torch::TensorOptions().dtype(torch::kInt32);
+            torch::Tensor t = torch::from_blob(arr, {cols, 1}, options=options).to(torch::kInt64);
+            dictionary2.insert("atom_types", t);
+        }
+    }
+
+    dictionary2.insert("batch", t3);
+    inputs2.push_back(dictionary);
+
+    // Execute the model and turn its output into a tensor.
+    module.eval();
+    std::cout << "SECOND TEIM before forward" << std::endl;
+    auto output2 = module.forward(inputs2).toGenericDict();
+    std::cout << "SECOND TIEM after forward" << std::endl;
+
+    std::cout << "SECOND TIME keys\n--------------------------------------------------------" << std::endl;
+    for (auto it = output2.begin(); it!=output2.end(); it++) {
+        std::cout << it->key() << std::endl;
+    }
+    std::cout << "SECOND TIME keysdone\n--------------------------------------------------------" << std::endl;
+    // size: (1857, 3)
+    torch::Tensor forces_tensor2 = output2.at("forces").toTensor();
+    std::cout << "SECOND TIME FORCES" << std::endl;
+    for (int i = 0; i < nat; i++) {
+        std::cout << i << ": " << forces_tensor2[i][0] << ", " << forces_tensor2[i][1] << ", " << forces_tensor2[i][2] << std::endl;
+    }
+    torch::Tensor total_energy_tensor2 = output2.at("total_energy").toTensor();
+    torch::Tensor atomic_energy_tensor2 = output2.at("atomic_energy").toTensor();
+    std::cout << "SECOND TIME energy dim: " << atomic_energy_tensor2.dim() << std::endl;
+    std::cout << "SECOND TIME energy dim: " << atomic_energy_tensor2.size(0) << ", " << atomic_energy_tensor2.size(1) << std::endl;
+    std::cout << "SECOND TIME ENERGIES" << std::endl;
+    for (int i = 0; i < nat; i++) {
+        std::cout << i << ": " << atomic_energy_tensor2[i][0] << std::endl;
+    }
+    // auto atomic_energies = atomic_energy_tensor.accessor<float, 2>();
+    float atomic_energy_sum2 = atomic_energy_tensor2.sum().data_ptr<float>()[0];
+    std::cout << "SECOND TIME Atomic energy sum: " << atomic_energy_sum2 << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
