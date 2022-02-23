@@ -57,7 +57,7 @@ struct AtomGraph {
 		    dist_sq += (m_nodes[i][k].item<double>() - m_nodes[j][k].item<double>()) * (m_nodes[i][k].item<double>() - m_nodes[j][k].item<double>());
                 }
 		if (dist_sq <= r_cutoff * r_cutoff && i != j) {
-			std::cout << "added edge (" << i << ", " << j << ")" << std::endl;
+			// std::cout << "added edge (" << i << ", " << j << ")" << std::endl;
 		    srcs.push_back(i);
 		    targets.push_back(j);
 		    num_edges++;
@@ -187,31 +187,31 @@ int main(int argc, char** argv)
             // }
             dictionary.insert(entry->key, t);
        } else if (entry->data_t == data_s) {
-            // std::cout << (char**) (entry->data) << std::endl;
-            // int arr[rows * cols];
-            // for (int j=0; j<cols; j++) {
-            //     std::string type(((char**) (entry->data))[j]);
-            //     std::cout << type << std::endl;
-            //     if (type == "Hf") {
-            //         arr[j] = 72;
-            //     } else if (type == "O") {
-            //         arr[j] = 8;
-            //     }
-            // }
+            std::cout << (char**) (entry->data) << std::endl;
+            int arr[cols];
+            for (int j=0; j<cols; j++) {
+                std::string type(((char**) (entry->data))[j]);
+                std::cout << type << std::endl;
+                if (type == "Hf") {
+                    arr[j] = 0;
+                } else if (type == "O") {
+                    arr[j] = 1;
+                }
+            }
             // for (int j=0; j<cols; j++) {
             //     std::cout << arr[j] << std::endl;
             // }
             // int data[] = {72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 8, 8 };
-            int data[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1};
+            // int data[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1};
 	    auto options = torch::TensorOptions().dtype(torch::kInt32);
-            torch::Tensor t = torch::from_blob(data, {32, 1}, options=options).to(torch::kInt64);
-	    // std::cout << "printing atom types" << std::endl;
-            // for (int i=0; i<32; i++) {
-            //     for (int j=0; j<1; j++) {
-            //         std::cout << "i: " << i << " j: " << j << std::endl;
-            //         std::cout << t[i][j] << std::endl;
-            //     }
-            // }
+            torch::Tensor t = torch::from_blob(arr, {cols, 1}, options=options).to(torch::kInt64);
+	    std::cout << "printing atom types" << std::endl;
+            for (int i=0; i<cols; i++) {
+                for (int j=0; j<1; j++) {
+                    std::cout << "i: " << i << " j: " << j << std::endl;
+                    std::cout << t[i][j] << std::endl;
+                }
+            }
             dictionary.insert("atom_types", t);
         }
 
@@ -326,7 +326,7 @@ int main(int argc, char** argv)
     // dictionary.insert("edge_index", t);
     // torch::Tensor t2 = torch::randn({32, 3});
     // dictionary.insert("pos", t2);
-    torch::Tensor t3 = torch::randint(0, 1, {32}).to(torch::kLong);
+    torch::Tensor t3 = torch::randint(0, 1, {nat}).to(torch::kLong);
     dictionary.insert("batch", t3);
     // torch::Tensor t5 = torch::randn({50, 3, 3}).to(torch::kLong); //used to not be kLong
     // dictionary.insert("cell", t5);
@@ -364,7 +364,7 @@ int main(int argc, char** argv)
     // size: (1857, 3)
     torch::Tensor forces_tensor = output.at("forces").toTensor();
     std::cout << "FORCES" << std::endl;
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < nat; i++) {
         std::cout << i << ": " << forces_tensor[i][0] << ", " << forces_tensor[i][1] << ", " << forces_tensor[i][2] << std::endl;
     }
     torch::Tensor total_energy_tensor = output.at("total_energy").toTensor();
@@ -372,7 +372,7 @@ int main(int argc, char** argv)
     std::cout << "energy dim: " << atomic_energy_tensor.dim() << std::endl;
     std::cout << "energy dim: " << atomic_energy_tensor.size(0) << ", " << atomic_energy_tensor.size(1) << std::endl;
     std::cout << "ENERGIES" << std::endl;
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < nat; i++) {
         std::cout << i << ": " << atomic_energy_tensor[i][0] << std::endl;
     }
     // auto atomic_energies = atomic_energy_tensor.accessor<float, 2>();
