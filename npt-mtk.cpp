@@ -162,8 +162,8 @@ int main(int argc, char** argv)
         // std::cout << entry->key << std::endl;
 	std::string str1 (entry->key);
 	std::string str2 ("pos");
-	std::string str3 ("forces");
-        if (entry->data_t == data_f && (str1.compare(str2) == 0 || str1.compare(str3) == 0)) {
+	// std::string str3 ("forces");
+        if (entry->data_t == data_f && str1.compare(str2) == 0) {
             torch::Tensor t = torch::from_blob((double*) entry->data, {rows, cols});
 	    if (str1.compare(str2) == 0) {
                 AtomGraph system(t, rows, 5.0);
@@ -194,9 +194,9 @@ int main(int argc, char** argv)
     inputs.push_back(dictionary);
 
     // Execute the model and turn its output into a tensor.
-    module.eval();
+    // module.eval();
     std::cout << "before forward" << std::endl;
-    auto output = module.forward(inputs).toGenericDict();
+    auto output = module(inputs).toGenericDict();
     std::cout << "after forward" << std::endl;
 
     std::cout << "keys\n--------------------------------------------------------" << std::endl;
@@ -329,7 +329,7 @@ int main(int argc, char** argv)
 	dictionary2.insert("edge_index", edges);
 	std::cout << "SCOND ITME Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
         dictionary2.insert("pos", pos_updated_after_physics);
-	dictionary2.insert("forces", forces_tensor);
+	// dictionary2.insert("forces", forces_tensor);
 
 	std::string str1 (entry->key);
         if (entry->data_t == data_s) {
@@ -349,13 +349,15 @@ int main(int argc, char** argv)
         }
     }
 
-    dictionary2.insert("batch", t3);
+    torch::Tensor t3_2 = torch::randint(0, 1, {nat}).to(torch::kLong);
+    dictionary2.insert("batch", t3_2);
     inputs2.push_back(dictionary);
 
     // Execute the model and turn its output into a tensor.
-    module.eval();
+    // module.eval();
     std::cout << "SECOND TEIM before forward" << std::endl;
-    auto output2 = module.forward(inputs2).toGenericDict();
+    auto output2 = module(inputs2).toGenericDict();
+    // auto output2 = module.forward(inputs2).toGenericDict();
     std::cout << "SECOND TIEM after forward" << std::endl;
 
     std::cout << "SECOND TIME keys\n--------------------------------------------------------" << std::endl;
