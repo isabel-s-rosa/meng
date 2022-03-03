@@ -205,7 +205,7 @@ int main(int argc, char** argv)
     }
     std::cout << "keysdone\n--------------------------------------------------------" << std::endl;
     // size: (1857, 3)
-    torch::Tensor forces_tensor = output.at("forces").toTensor();
+    torch::Tensor forces_tensor = output.at("forces").toTensor().detach();
     std::cout << "FORCES" << std::endl;
     for (int i = 0; i < nat; i++) {
         std::cout << i << ": " << forces_tensor[i][0] << ", " << forces_tensor[i][1] << ", " << forces_tensor[i][2] << std::endl;
@@ -222,7 +222,7 @@ int main(int argc, char** argv)
     float atomic_energy_sum = atomic_energy_tensor.sum().data_ptr<float>()[0];
     std::cout << "Atomic energy sum: " << atomic_energy_sum << std::endl;
 
-    torch::Tensor new_pos = output.at("pos").toTensor();
+    torch::Tensor new_pos = output.at("pos").toTensor().detach();
 
     // physics stuff
     float temp = 300.0;
@@ -324,14 +324,8 @@ int main(int argc, char** argv)
             cols = entry->ncols;
         }
         // std::cout << entry->key << std::endl;
-        AtomGraph system(pos_updated_after_physics, rows, 5.0);
-	torch::Tensor edges = system.edges();
-	dictionary2.insert("edge_index", edges);
-	std::cout << "SCOND ITME Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
-        dictionary2.insert("pos", pos_updated_after_physics);
-	// dictionary2.insert("forces", forces_tensor);
 
-	std::string str1 (entry->key);
+        std::string str1 (entry->key);
         if (entry->data_t == data_s) {
             std::cout << (char**) (entry->data) << std::endl;
             int arr[cols];
@@ -343,15 +337,22 @@ int main(int argc, char** argv)
                     arr[j] = 1;
                 }
             }
-	    auto options = torch::TensorOptions().dtype(torch::kInt32);
+            auto options = torch::TensorOptions().dtype(torch::kInt32);
             torch::Tensor t = torch::from_blob(arr, {cols, 1}, options=options).to(torch::kInt64);
             dictionary2.insert("atom_types", t);
+
+            AtomGraph system(pos_updated_after_physics, cols, 5.0);
+            torch::Tensor edges = system.edges();
+            dictionary2.insert("edge_index", edges);
+            std::cout << "SCOND ITME Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
+            dictionary2.insert("pos", pos_updated_after_physics);
+            // dictionary2.insert("forces", forces_tensor);
         }
     }
 
     torch::Tensor t3_2 = torch::randint(0, 1, {nat}).to(torch::kLong);
     dictionary2.insert("batch", t3_2);
-    inputs2.push_back(dictionary);
+    inputs2.push_back(dictionary2);
 
     // Execute the model and turn its output into a tensor.
     // module.eval();
