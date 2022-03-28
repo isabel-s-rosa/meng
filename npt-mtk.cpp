@@ -122,6 +122,9 @@ private:
 
 typedef struct { int pos_x0, left_slope, pos_x1, right_slope; } Zoid;
 
+// x y z right and left may not matter, i think we want to cut in by 3r from
+// most extreme atoms in each dimension each time instead of using a boundary
+// in 3D space to define cuts bc something might cross that boundary
 void  trapezoid(torch::jit::script::Module module,
                 int t0,
                 int t1,
@@ -133,12 +136,12 @@ void  trapezoid(torch::jit::script::Module module,
 		float* atoms_ret,
                 int* atom_types_ret,
                 int* timestep_ret,
-                float x_left,
+                /*float x_left,
                 float x_right,
                 float y_left,
                 float y_right,
                 float z_left,
-                float z_right,
+                float z_right,*/
                 bool x_left_cut,
                 bool x_right_cut,
                 bool y_left_cut,
@@ -148,12 +151,12 @@ void  trapezoid(torch::jit::script::Module module,
 {
     std::cout << "t0: " << t0 << std::endl;
     std::cout << "t1: " << t1 << std::endl;
-    std::cout << "x left: " << x_left << std::endl;
+    /*std::cout << "x left: " << x_left << std::endl;
     std::cout << "x right: " << x_right << std::endl;
     std::cout << "y left: " << y_left << std::endl;
     std::cout << "y right: " << y_right << std::endl;
     std::cout << "z left: " << z_left << std::endl;
-    std::cout << "z right: " << z_right << std::endl;
+    std::cout << "z right: " << z_right << std::endl;*/
     int delta_t = t1 - t0;
 
     if (delta_t == 1) {
@@ -222,6 +225,7 @@ void  trapezoid(torch::jit::script::Module module,
                 }
             }
         }
+	float x_left, x_right, y_left, y_right, z_left, z_right;
         float pos_fullstep[nat1][3];
         for (int i = 0; i < nat1; i++) {
             for (int j = 0; j < 3; j++) {
@@ -230,12 +234,21 @@ void  trapezoid(torch::jit::script::Module module,
                     pos_fullstep[i][j] = new_pos[i][j].item<float>();
                 }
             }
-	    x_left = std::min(x_left, pos_fullstep[i][0]);
-	    y_left = std::min(y_left, pos_fullstep[i][1]);
-	    z_left = std::min(z_left, pos_fullstep[i][2]);
-	    x_right = std::max(x_right, pos_fullstep[i][0]);
-	    y_right = std::max(y_right, pos_fullstep[i][1]);
-	    z_right = std::max(z_right, pos_fullstep[i][2]);
+	    if (i == 0) {
+	        x_left = pos_fullstep[i][0];
+	        y_left = pos_fullstep[i][1];
+	        z_left = pos_fullstep[i][2];
+	        x_right = pos_fullstep[i][0];
+	        y_right = pos_fullstep[i][1];
+	        z_right = pos_fullstep[i][2];
+	    } else {
+	        x_left = std::min(x_left, pos_fullstep[i][0]);
+	        y_left = std::min(y_left, pos_fullstep[i][1]);
+	        z_left = std::min(z_left, pos_fullstep[i][2]);
+	        x_right = std::max(x_right, pos_fullstep[i][0]);
+	        y_right = std::max(y_right, pos_fullstep[i][1]);
+	        z_right = std::max(z_right, pos_fullstep[i][2]);
+	    }
         }
         float vel_halfstep[nat1][3];
         for (int i = 0; i < nat1; i++) {
@@ -367,12 +380,12 @@ void  trapezoid(torch::jit::script::Module module,
 		      atoms_bottom,
 		      atom_types_bottom,
 		      atom_times_bottom,
-	              x_left,
+	              /*x_left,
 	              x_right,
 	              y_left,
 	              y_right,
 	              z_left,
-	              z_right,
+	              z_right,*/
 	              x_left_cut,
 	              x_right_cut,
 	              y_left_cut,
@@ -433,7 +446,7 @@ void  trapezoid(torch::jit::script::Module module,
 	    float* atoms_top = new float[nat_left * 3];
 	    int* atom_types_top = new int[nat_left];
 	    int* atom_times_top = new int[nat_left];
-	    float new_x_left = x_left;
+	    /*float new_x_left = x_left;
 	    float new_x_right = x_right;
 	    float new_y_left = y_left;
 	    float new_y_right = y_right;
@@ -456,7 +469,7 @@ void  trapezoid(torch::jit::script::Module module,
 	    }
 	    if (z_right_cut) {
                 new_z_right = z_right - 3 * 5.0 * halftime;
-	    }
+	    }*/
 	    trapezoid(module,
 	              t0 + halftime,
 	              t1,
@@ -466,12 +479,12 @@ void  trapezoid(torch::jit::script::Module module,
 	              atoms_top,
 	              atom_types_top,
 	              atom_times_top,
-	              new_x_left,
+	              /*new_x_left,
 	              new_x_right,
 	              new_y_left,
 	              new_y_right,
 	              new_z_left,
-	              new_z_right,
+	              new_z_right,*/
 	              x_left_cut,
 	              x_right_cut,
 	              y_left_cut,
@@ -606,24 +619,24 @@ int main(int argc, char** argv)
     // std::cout << "Atomic energy sum: " << atomic_energy_sum << std::endl;
 
     float* atoms1 = new float[nat * 3];
-    float x_left = pos_param[0][0].item<float>();
+    /*float x_left = pos_param[0][0].item<float>();
     float x_right = x_left;
     float y_left = pos_param[0][1].item<float>();
     float y_right = y_left;
     float z_left = pos_param[0][2].item<float>();
-    float z_right = z_left;
+    float z_right = z_left;*/
     for (int i = 0; i < nat; i++) {
         atoms1[i * 3 + 0] = pos_param[i][0].item<float>();
         atoms1[i * 3 + 1] = pos_param[i][1].item<float>();
         atoms1[i * 3 + 2] = pos_param[i][2].item<float>();
         // std::cout << "pos param: " << pos_param[i][0].item<float>() << ", " << pos_param[i][1].item<float>() << ", " << pos_param[i][2].item<float>() << std::endl;
         // std::cout << "atoms1: " << atoms1[i][0] << ", " << atoms1[i][1] << ", " << atoms1[i][2] << std::endl;
-        x_left = std::min(atoms1[i * 3 + 0], x_left);
+        /*x_left = std::min(atoms1[i * 3 + 0], x_left);
         y_left = std::min(atoms1[i * 3 + 1], y_left);
         y_left = std::min(atoms1[i * 3 + 2], z_left);
         x_right = std::max(atoms1[i * 3 + 0], x_right);
         y_right = std::max(atoms1[i * 3 + 1], y_right);
-        y_right = std::max(atoms1[i * 3 + 2], z_right);
+        y_right = std::max(atoms1[i * 3 + 2], z_right);*/
     }
     std::cout << "starting zoid lol" << std::endl;
     std::cout << "num steps again: " << num_steps << std::endl;
@@ -640,12 +653,12 @@ int main(int argc, char** argv)
               atoms_answer,
               atoms_types,
               atoms_times,
-              x_left,
+              /*x_left,
               x_right,
               y_left,
               y_right,
               z_left,
-              z_right,
+              z_right,*/
               false,
               false,
               false,
