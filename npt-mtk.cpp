@@ -180,7 +180,7 @@ void  trapezoid(torch::jit::script::Module module,
 
 	// std::cout << "Pos dim 0: " << pos_base.size(0) << ", dim 1: " << pos_base.size(1) << std::endl;
 	std::cout << "nat: " << nat1 << std::endl;
-        AtomGraph system(pos_base, nat1, 5.0);
+        AtomGraph system(pos_base, nat1, 3.0);
         torch::Tensor edges = system.edges();
         dictionary2.insert("edge_index", edges);
 	std::cout << "Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
@@ -294,22 +294,22 @@ void  trapezoid(torch::jit::script::Module module,
 	float new_z_left = z_left;
 	float new_z_right = z_right;
 	if (x_left_cut) {
-            new_x_left = x_left + 3 * 5.0;
+            new_x_left = x_left + 3 * 3.0;
 	}
 	if (x_right_cut) {
-            new_x_right = x_right - 3 * 5.0;
+            new_x_right = x_right - 3 * 3.0;
 	}
 	if (y_left_cut) {
-            new_y_left = y_left + 3 * 5.0;
+            new_y_left = y_left + 3 * 3.0;
 	}
 	if (y_right_cut) {
-            new_y_right = y_right - 3 * 5.0;
+            new_y_right = y_right - 3 * 3.0;
 	}
 	if (z_left_cut) {
-            new_z_left = z_left + 3 * 5.0;
+            new_z_left = z_left + 3 * 3.0;
 	}
 	if (z_right_cut) {
-            new_z_right = z_right - 3 * 5.0;
+            new_z_right = z_right - 3 * 3.0;
 	}
 	// 3d coords + time step after which it gets cut + atom type
 	// float* to_return = new float[nat1 * 3];
@@ -330,13 +330,14 @@ void  trapezoid(torch::jit::script::Module module,
                 // would not have gotten cut next step
 		// not on the edge
 		timestep_ret[i] = t1;
+		// std::cout << "not on edge, t1: " << t1 << std::endl;
                 // to_return[i][3] = static_cast<float>(t1);
 		//     std::cout << "returning: " << to_return[i][3] << std::endl;
 
 	    } else {
                 // woudl have gotten cut next step
 		// on edge
-		    std::cout << "in a flase statement lol" << std::endl;
+		// std::cout << "adding something to edge, only possible w space cut" << std::endl;
 		// to_return[i][3] = static_cast<float>(t0);
 		timestep_ret[i] = t0;
 	    }
@@ -352,157 +353,353 @@ void  trapezoid(torch::jit::script::Module module,
 	std::cout << "returning from base case" << std::endl;
 	// return return_tensor;
     } else {
-        if (/* wide enough ? */ false) {
-            // space cut
-	} else {
-            int halftime = delta_t / 2;
-	    // bottom zoid:
-	    // float** atoms_copy = new float*[nat1];
-	    // int* atom_types_copy = new int[nat1];
-	    // for (int i = 0; i < nat1; i++) {
-            //     atom_types_copy[i] = atom_types1[i];
-	    //     atoms_copy[i] = new float[3];
-	    //     atoms_copy[0] = atoms1[0];
-	    //     atoms_copy[1] = atoms1[1];
-	    //     atoms_copy[2] = atoms1[2];
-	    // }
-	    std::cout << "recursing bottom trap" << std::endl;
-	    // torch::Tensor atoms_bottom;
-	    float* atoms_bottom = new float[nat1 * 3];
-	    int* atom_types_bottom = new int[nat1];
-	    int* atom_times_bottom = new int[nat1];
-	    trapezoid(module,
-	              t0,
-	              t0 + halftime,
-	              nat1,
-	              atoms1,
-	              atom_types1,
-		      atoms_bottom,
-		      atom_types_bottom,
-		      atom_times_bottom,
-	              /*x_left,
-	              x_right,
-	              y_left,
-	              y_right,
-	              z_left,
-	              z_right,*/
-	              x_left_cut,
-	              x_right_cut,
-	              y_left_cut,
-	              y_right_cut,
-	              z_left_cut,
-	              z_right_cut);
-	    std::cout << "done bottom trap" << std::endl;
+        // abt 50 edges each ??
+        // nat >> delta_t * 3 * r??
+	// nat > 50 * delta_t + buffer (we expect to lose abt 50 atoms per step ?)
+	// which axis (xyz) to use ?
+	// calc xyz max min, calc xyz average
+	// if enough atoms have xyz < xyz ave - delta_t * 3 * r and xyz > xyz ave + delta_t * 3 * r, do xyz cut
+	if (t0 == 0 && t1 == 5 && nat1 == 768) {
+            std::cout << "checking if space cut possible" << std::endl;
+	    std::vector<float> xs;
+	    for (int i = 0; i < nat1; i++) {
+                if (atoms1[i * 3 + 0] != atoms1[i * 3 + 0]) {
+                    // nan
+		} else {
+                    xs.push_back(atoms1[i * 3 + 0]);
+		}
+	    }
+            nth_element(xs.begin(), xs.begin() + nat1 / 2, xs.end());
+	    float med_x = (float) xs[nat1 / 2];
+	    std::cout << "x med: " << med_x << std::endl;
+	    int nat_below_x_ave_top = 0;
+	    int nat_above_x_ave_top = 0;
+	    int nat_below_x = 0;
+	    int nat_above_x = 0;
+	    float* atoms_below_x = new float[nat1 * 3];
+	    float* atoms_above_x = new float[nat1 * 3];
+	    int* atom_types_below_x = new int[nat1];
+	    int* atom_types_above_x = new int[nat1];
+	    for (int i = 0; i < nat1; i++) {
+                if (atoms1[i * 3 + 0] <= med_x) {
+	    	    atoms_below_x[nat_below_x * 3 + 0] = atoms1[i * 3 + 0];
+	    	    atoms_below_x[nat_below_x * 3 + 1] = atoms1[i * 3 + 1];
+	    	    atoms_below_x[nat_below_x * 3 + 2] = atoms1[i * 3 + 2];
+	    	    atom_types_below_x[nat_below_x] = atom_types1[i];
+                    nat_below_x++;
+		    if (atoms1[i * 3 + 0] < med_x - delta_t * 3 * 3.0) {
+                        nat_below_x_ave_top++;
+		    }
+	        } else {
+	    	    atoms_above_x[nat_above_x * 3 + 0] = atoms1[i * 3 + 0];
+	    	    atoms_above_x[nat_above_x * 3 + 1] = atoms1[i * 3 + 1];
+	    	    atoms_above_x[nat_above_x * 3 + 2] = atoms1[i * 3 + 2];
+	    	    atom_types_above_x[nat_above_x] = atom_types1[i];
+                    nat_above_x++;
+                    if (atoms1[i * 3 + 0] > med_x + delta_t * 3 * 3.0) {
+                        nat_above_x_ave_top++;
+		    }
+	        }
+	    }
+	    std::cout << "nat below x ave top: " << nat_below_x_ave_top << std::endl;
+	    std::cout << "nat above x ave top: " << nat_above_x_ave_top << std::endl;
+	    if (nat_below_x_ave_top >= 4 /*arbitrary, should change*/ && nat_above_x_ave_top >= 4) {
+                // wide enough in x dim
+	        std::cout << "recursing left trap, nat below: " << nat_below_x << std::endl;
+	        float* atoms_left_final = new float[nat_below_x * 3];
+	        int* atom_types_left_final = new int[nat_below_x];
+	        int* atom_times_left_final = new int[nat_below_x];
+	        trapezoid(module,
+	                  t0,
+	                  t1,
+	                  nat_below_x,
+	                  atoms_below_x,
+	                  atom_types_below_x,
+	                  atoms_left_final,
+	                  atom_types_left_final,
+	                  atom_times_left_final,
+	                  /*x_left,
+	                  x_right,
+	                  y_left,
+	                  y_right,
+	                  z_left,
+	                  z_right,*/
+	                  x_left_cut,
+	                  true,
+	                  y_left_cut,
+	                  y_right_cut,
+	                  z_left_cut,
+	                  z_right_cut);
+	        std::cout << "done left trap" << std::endl;
+                // std::cout << "poses of left trap, t0: " << t0 << ", t1: " << t1 << std::endl;
+                // for (int i = 0; i < nat_below_x; i++) {
+                //     std::cout << i << ": " << atoms_left_final[i * 3 + 0] << ", " << atoms_left_final[i * 3 + 1] << ", " << atoms_left_final[i * 3 + 2] << std::endl;
+	        // }
+	        std::cout << "recursing right trap, nat above: " << nat_above_x << std::endl;
+	        float* atoms_right_final = new float[nat_above_x * 3];
+	        int* atom_types_right_final = new int[nat_above_x];
+	        int* atom_times_right_final = new int[nat_above_x];
+	        trapezoid(module,
+	                  t0,
+	                  t1,
+	                  nat_above_x,
+	                  atoms_above_x,
+	                  atom_types_above_x,
+	                  atoms_right_final,
+	                  atom_types_right_final,
+	                  atom_times_right_final,
+	                  /*x_left,
+	                  x_right,
+	                  y_left,
+	                  y_right,
+	                  z_left,
+	                  z_right,*/
+	                  true,
+	                  x_right_cut,
+	                  y_left_cut,
+	                  y_right_cut,
+	                  z_left_cut,
+	                  z_right_cut);
+	        std::cout << "done right trap" << std::endl;
+                // std::cout << "poses of left trap, t0: " << t0 << ", t1: " << t1 << std::endl;
+                // for (int i = 0; i < nat_below_x; i++) {
+                //     std::cout << i << ": " << atoms_left_final[i * 3 + 0] << ", " << atoms_left_final[i * 3 + 1] << ", " << atoms_left_final[i * 3 + 2] << std::endl;
+	        // }
+	        return;
+	    }
+	}
+
+	// other dimension cuts
+	// float y_ave = 0;
+	// for (int i = 0; i < nat1; i++) {
+	//     y_ave += atoms1[i * 3 + 1];
+	// }
+	// y_ave /= nat1;
+	// int nat_below_y_ave_top, nat_above_y_ave_top = 0;
+	// int nat_below_y, nat_above_y = 0;
+	// float* atoms_below_y = new float[nat1 * 3];
+	// float* atoms_above_y = new float[nat1 * 3];
+	// for (int i = 0; i < nat1; i++) {
+        //     if (atoms1[i * 3 + 1] < y_ave - delta_t * 3 * 5.0) {
+	// 	atoms_below_y[nat_below_y * 3 + 0] = atoms1[i * 3 + 0];
+	// 	atoms_below_y[nat_below_y * 3 + 1] = atoms1[i * 3 + 1];
+	// 	atoms_below_y[nat_below_y * 3 + 2] = atoms1[i * 3 + 2];
+        //         nat_below_y++;
+        //         nat_below_y_ave_top++;
+	//     } else if (atoms1[i * 3 + 1] <= y_ave) {
+	// 	atoms_below_y[nat_below_y * 3 + 0] = atoms1[i * 3 + 0];
+	// 	atoms_below_y[nat_below_y * 3 + 1] = atoms1[i * 3 + 1];
+	// 	atoms_below_y[nat_below_y * 3 + 2] = atoms1[i * 3 + 2];
+        //         nat_below_y++;
+	//     } else if (atoms1[i * 3 + 1] > y_ave + delta_t * 3 * 5.0) {
+	// 	atoms_above_y[nat_above_y * 3 + 0] = atoms1[i * 3 + 0];
+	// 	atoms_above_y[nat_above_y * 3 + 1] = atoms1[i * 3 + 1];
+	// 	atoms_above_y[nat_above_y * 3 + 2] = atoms1[i * 3 + 2];
+        //         nat_above_y++;
+        //         nat_above_y_ave_top++;
+	//     } else {
+	// 	atoms_above_y[nat_above_y * 3 + 0] = atoms1[i * 3 + 0];
+	// 	atoms_above_y[nat_above_y * 3 + 1] = atoms1[i * 3 + 1];
+	// 	atoms_above_y[nat_above_y * 3 + 2] = atoms1[i * 3 + 2];
+        //         nat_above_y++;
+	//     }
+	// }
+	// if (nat_below_y_ave_top >= 5 /*arbitrary, should change*/ && nat_above_y_ave_top >= 5) {
+        //     // wide enough in y dim
+	//     return;
+	// }
+
+	// float z_ave = 0;
+	// for (int i = 0; i < nat1; i++) {
+	//     z_ave += atoms1[i * 3 + 2];
+	// }
+	// z_ave /= nat1;
+	// int nat_below_z_ave_top, nat_above_z_ave_top = 0;
+	// int nat_below_z, nat_above_z = 0;
+	// float* atoms_below_z = new float[nat1 * 3];
+	// float* atoms_above_z = new float[nat1 * 3];
+	// for (int i = 0; i < nat1; i++) {
+        //     if (atoms1[i * 3 + 2] < z_ave - delta_t * 3 * 5.0) {
+	// 	atoms_below_z[nat_below_z * 3 + 0] = atoms1[i * 3 + 0];
+	// 	atoms_below_z[nat_below_z * 3 + 1] = atoms1[i * 3 + 1];
+	// 	atoms_below_z[nat_below_z * 3 + 2] = atoms1[i * 3 + 2];
+        //         nat_below_z++;
+        //         nat_below_z_ave_top++;
+	//     } else if (atoms1[i * 3 + 2] <= z_ave) {
+	// 	atoms_below_z[nat_below_z * 3 + 0] = atoms1[i * 3 + 0];
+	// 	atoms_below_z[nat_below_z * 3 + 1] = atoms1[i * 3 + 1];
+	// 	atoms_below_z[nat_below_z * 3 + 2] = atoms1[i * 3 + 2];
+        //         nat_below_z++;
+	//     } else if (atoms1[i * 3 + 2] > z_ave + delta_t * 3 * 5.0) {
+	// 	atoms_above_z[nat_above_z * 3 + 0] = atoms1[i * 3 + 0];
+	// 	atoms_above_z[nat_above_z * 3 + 1] = atoms1[i * 3 + 1];
+	// 	atoms_above_z[nat_above_z * 3 + 2] = atoms1[i * 3 + 2];
+        //         nat_above_z++;
+        //         nat_above_z_ave_top++;
+	//     } else {
+	// 	atoms_above_z[nat_above_z * 3 + 0] = atoms1[i * 3 + 0];
+	// 	atoms_above_z[nat_above_z * 3 + 1] = atoms1[i * 3 + 1];
+	// 	atoms_above_z[nat_above_z * 3 + 2] = atoms1[i * 3 + 2];
+        //         nat_above_z++;
+	//     }
+	// }
+	// if (nat_below_z_ave_top >= 5 /*arbitrary, should change*/ && nat_above_z_ave_top >= 5) {
+        //     // wide enough in z dim
+	//     return;
+	// }
+
+	// TIME CUT
+        int halftime = delta_t / 2;
+	// bottom zoid:
+	// float** atoms_copy = new float*[nat1];
+	// int* atom_types_copy = new int[nat1];
+	// for (int i = 0; i < nat1; i++) {
+        //     atom_types_copy[i] = atom_types1[i];
+	//     atoms_copy[i] = new float[3];
+	//     atoms_copy[0] = atoms1[0];
+	//     atoms_copy[1] = atoms1[1];
+	//     atoms_copy[2] = atoms1[2];
+	// }
+	std::cout << "recursing bottom trap" << std::endl;
+	// torch::Tensor atoms_bottom;
+	float* atoms_bottom = new float[nat1 * 3];
+	int* atom_types_bottom = new int[nat1];
+	int* atom_times_bottom = new int[nat1];
+	trapezoid(module,
+	          t0,
+	          t0 + halftime,
+	          nat1,
+	          atoms1,
+	          atom_types1,
+	          atoms_bottom,
+	          atom_types_bottom,
+	          atom_times_bottom,
+	          /*x_left,
+	          x_right,
+	          y_left,
+	          y_right,
+	          z_left,
+	          z_right,*/
+	          x_left_cut,
+	          x_right_cut,
+	          y_left_cut,
+	          y_right_cut,
+	          z_left_cut,
+	          z_right_cut);
+	std::cout << "done bottom trap" << std::endl;
         // std::cout << "poses of bottom trap, t0: " << t0 << ", t1: " << t1 << std::endl;
         // for (int i = 0; i < nat1; i++) {
         //     std::cout << i << ": " << atoms_bottom[i * 3 + 0] << ", " << atoms_bottom[i * 3 + 1] << ", " << atoms_bottom[i * 3 + 2] << std::endl;
 	// }
-	    // top zoid:
-	    int nat_left = 0;
-	    float* atoms_left = new float[nat1 * 3];
-	    int* atom_types_left = new int[nat1];
-	    // float* merged_atom_info = new float[nat1 * 3];
-	    int j = 0;
+	// top zoid:
+	int nat_left = 0;
+	float* atoms_left = new float[nat1 * 3];
+	int* atom_types_left = new int[nat1];
+	// float* merged_atom_info = new float[nat1 * 3];
+	int j = 0;
         // std::cout << "poses before upper, t0: " << t0 << ", t1: " << t1 << std::endl;
-	    for (int k = 0; k < nat1; k++) {
-		if ( atom_times_bottom[k] == t0 + halftime ) {
-		    // std::cout << k << ": " << atoms_bottom[k * 3 + 0] << ", " << atoms_bottom[k * 3 + 1] << ", " << atoms_bottom[k * 3 + 2] << std::endl;
-		    atoms_left[nat_left * 3 + 0] = atoms_bottom[k * 3 + 0];
-		    atoms_left[nat_left * 3 + 1] = atoms_bottom[k * 3 + 1];
-		    atoms_left[nat_left * 3 + 2] = atoms_bottom[k * 3 + 2];
-		    // std::cout << k << ": " << atoms_left[nat_left * 3 + 0] << ", " << atoms_left[nat_left * 3 + 1] << ", " << atoms_left[nat_left * 3 + 2] << std::endl;
-	            atom_types_left[nat_left] = atom_types_bottom[k];
-		    nat_left++;
-		} else {
-                    atoms_ret[j * 3 + 0] = atoms_bottom[k * 3 + 0];
-                    atoms_ret[j * 3 + 1] = atoms_bottom[k * 3 + 1];
-                    atoms_ret[j * 3 + 2] = atoms_bottom[k * 3 + 2];
-		    atom_types_ret[j] = atom_types_bottom[k];
-		    timestep_ret[j] = atom_times_bottom[k];
-		    j++;
-		}
+	for (int k = 0; k < nat1; k++) {
+	    if ( atom_times_bottom[k] == t0 + halftime ) {
+                // top row of atoms, will not get cut on next time step
+	        // std::cout << k << ": " << atoms_bottom[k * 3 + 0] << ", " << atoms_bottom[k * 3 + 1] << ", " << atoms_bottom[k * 3 + 2] << std::endl;
+	        atoms_left[nat_left * 3 + 0] = atoms_bottom[k * 3 + 0];
+	        atoms_left[nat_left * 3 + 1] = atoms_bottom[k * 3 + 1];
+	        atoms_left[nat_left * 3 + 2] = atoms_bottom[k * 3 + 2];
+	        // std::cout << k << ": " << atoms_left[nat_left * 3 + 0] << ", " << atoms_left[nat_left * 3 + 1] << ", " << atoms_left[nat_left * 3 + 2] << std::endl;
+	        atom_types_left[nat_left] = atom_types_bottom[k];
+	        nat_left++;
+	    } else {
+                // edges, already got cut or will get cut next
+	        // check this, maybe ones that will get cut on next time step should be in atoms_left?
+                atoms_ret[j * 3 + 0] = atoms_bottom[k * 3 + 0];
+                atoms_ret[j * 3 + 1] = atoms_bottom[k * 3 + 1];
+                atoms_ret[j * 3 + 2] = atoms_bottom[k * 3 + 2];
+	        atom_types_ret[j] = atom_types_bottom[k];
+	        timestep_ret[j] = atom_times_bottom[k];
+	        j++;
 	    }
-	    std::cout << "atoms left at base of upper trap: " << nat_left << std::endl;
-	    // for (int i = 0; i < nat1; i++) {
-	    //     if (atoms1[i][0] >= new_x_left &&
-            //         atoms1[i][0] <= new_x_right &&
-	    //         atoms1[i][1] >= new_y_left &&
-	    //         atoms1[i][1] <= new_y_right &&
-	    //         atoms1[i][2] >= new_z_left &&
-	    //         atoms1[i][2] <= new_z_right) {
+	}
+	std::cout << "atoms left at base of upper trap: " << nat_left << std::endl;
+	// for (int i = 0; i < nat1; i++) {
+	//     if (atoms1[i][0] >= new_x_left &&
+        //         atoms1[i][0] <= new_x_right &&
+	//         atoms1[i][1] >= new_y_left &&
+	//         atoms1[i][1] <= new_y_right &&
+	//         atoms1[i][2] >= new_z_left &&
+	//         atoms1[i][2] <= new_z_right) {
 
-            //         atoms_left[nat_left] = new float[3];
-	    //         atoms_left[nat_left][0] = atoms1[i][0];
-	    //         atoms_left[nat_left][1] = atoms1[i][1];
-	    //         atoms_left[nat_left][2] = atoms1[i][2];
-	    //         atom_types_left[nat_left] = atom_types1[i];
-	    //         nat_left++;
+        //         atoms_left[nat_left] = new float[3];
+	//         atoms_left[nat_left][0] = atoms1[i][0];
+	//         atoms_left[nat_left][1] = atoms1[i][1];
+	//         atoms_left[nat_left][2] = atoms1[i][2];
+	//         atom_types_left[nat_left] = atom_types1[i];
+	//         nat_left++;
 
-	    //     }
-	    // }
-	    std::cout << "recursing top trap" << std::endl;
-            // torch::Tensor pos_base2 = torch::from_blob(atoms_left, {nat_left, 3});
-	    // torch::Tensor atoms_top;
-	    float* atoms_top = new float[nat_left * 3];
-	    int* atom_types_top = new int[nat_left];
-	    int* atom_times_top = new int[nat_left];
-	    /*float new_x_left = x_left;
-	    float new_x_right = x_right;
-	    float new_y_left = y_left;
-	    float new_y_right = y_right;
-	    float new_z_left = z_left;
-	    float new_z_right = z_right;
-	    if (x_left_cut) {
-                new_x_left = x_left + 3 * 5.0 * halftime;
-	    }
-	    if (x_right_cut) {
-                new_x_right = x_right - 3 * 5.0 * halftime;
-	    }
-	    if (y_left_cut) {
-                new_y_left = y_left + 3 * 5.0 * halftime;
-	    }
-	    if (y_right_cut) {
-                new_y_right = y_right - 3 * 5.0 * halftime;
-	    }
-	    if (z_left_cut) {
-                new_z_left = z_left + 3 * 5.0 * halftime;
-	    }
-	    if (z_right_cut) {
-                new_z_right = z_right - 3 * 5.0 * halftime;
-	    }*/
-	    trapezoid(module,
-	              t0 + halftime,
-	              t1,
-	              nat_left,
-	              atoms_left,
-	              atom_types_left,
-	              atoms_top,
-	              atom_types_top,
-	              atom_times_top,
-	              /*new_x_left,
-	              new_x_right,
-	              new_y_left,
-	              new_y_right,
-	              new_z_left,
-	              new_z_right,*/
-	              x_left_cut,
-	              x_right_cut,
-	              y_left_cut,
-	              y_right_cut,
-	              z_left_cut,
-	              z_right_cut);
-	    std::cout << "done top trap" << std::endl;
-	    for (int i = 0; i < nat_left;  i++) {
-                atoms_ret[j * 3 + 0] = atoms_top[i * 3 + 0];
-                atoms_ret[j * 3 + 1] = atoms_top[i * 3 + 1];
-                atoms_ret[j * 3 + 2] = atoms_top[i * 3 + 2];
-		atom_types_ret[j] = atom_types_top[j];
-		timestep_ret[j] = atom_times_top[j];
-		j++;
-	    }
-	    std::cout << "nat total: " << nat1 << std::endl;
-	    std::cout << "j: " << j << std::endl;
-	    std::cout << "returning non-base" << std::endl;
+	//     }
+	// }
+	std::cout << "recursing top trap" << std::endl;
+        // torch::Tensor pos_base2 = torch::from_blob(atoms_left, {nat_left, 3});
+	// torch::Tensor atoms_top;
+	float* atoms_top = new float[nat_left * 3];
+	int* atom_types_top = new int[nat_left];
+	int* atom_times_top = new int[nat_left];
+	/*float new_x_left = x_left;
+	float new_x_right = x_right;
+	float new_y_left = y_left;
+	float new_y_right = y_right;
+	float new_z_left = z_left;
+	float new_z_right = z_right;
+	if (x_left_cut) {
+            new_x_left = x_left + 3 * 5.0 * halftime;
+	}
+	if (x_right_cut) {
+            new_x_right = x_right - 3 * 5.0 * halftime;
+	}
+	if (y_left_cut) {
+            new_y_left = y_left + 3 * 5.0 * halftime;
+	}
+	if (y_right_cut) {
+            new_y_right = y_right - 3 * 5.0 * halftime;
+	}
+	if (z_left_cut) {
+            new_z_left = z_left + 3 * 5.0 * halftime;
+	}
+	if (z_right_cut) {
+            new_z_right = z_right - 3 * 5.0 * halftime;
+	}*/
+	trapezoid(module,
+	          t0 + halftime,
+	          t1,
+	          nat_left,
+	          atoms_left,
+	          atom_types_left,
+	          atoms_top,
+	          atom_types_top,
+	          atom_times_top,
+	          /*new_x_left,
+	          new_x_right,
+	          new_y_left,
+	          new_y_right,
+	          new_z_left,
+	          new_z_right,*/
+	          x_left_cut,
+	          x_right_cut,
+	          y_left_cut,
+	          y_right_cut,
+	          z_left_cut,
+	          z_right_cut);
+	std::cout << "done top trap" << std::endl;
+	for (int i = 0; i < nat_left;  i++) {
+            atoms_ret[j * 3 + 0] = atoms_top[i * 3 + 0];
+            atoms_ret[j * 3 + 1] = atoms_top[i * 3 + 1];
+            atoms_ret[j * 3 + 2] = atoms_top[i * 3 + 2];
+	    atom_types_ret[j] = atom_types_top[i];
+	    timestep_ret[j] = atom_times_top[i];
+	    j++;
+	}
+	std::cout << "nat total: " << nat1 << std::endl;
+	std::cout << "j: " << j << std::endl;
+	std::cout << "returning non-base" << std::endl;
         // std::cout << "poses of returned trap b4 tensor, t0: " << t0 << ", t1: " << t1 << std::endl;
         // for (int i = 0; i < nat1; i++) {
         //     std::cout << i << ": " << merged_atom_info[i][0] << ", " << merged_atom_info[i][1] << ", " << merged_atom_info[i][2] << std::endl;
@@ -512,8 +709,7 @@ void  trapezoid(torch::jit::script::Module module,
         // for (int i = 0; i < nat1; i++) {
         //     std::cout << i << ": " << atoms_ret[i][0].item<float>() << ", " << atoms_ret[i][1].item<float>() << ", " << atoms_ret[i][2].item<float>() << std::endl;
 	// }
-	    // return to_return;
-	}
+	// return to_return;
     }
 }
 
@@ -564,7 +760,7 @@ int main(int argc, char** argv)
         if (entry->data_t == data_f && str1.compare(str2) == 0) {
             pos_param = torch::from_blob((float*) entry->data, {rows, cols}).to(torch::kFloat);
 	    if (str1.compare(str2) == 0) {
-                AtomGraph system(pos_param, nat, 5.0);
+                AtomGraph system(pos_param, nat, 3.0);
 		torch::Tensor edges = system.edges();
 		dictionary.insert("edge_index", edges);
 		std::cout << "Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
@@ -813,7 +1009,7 @@ int main(int argc, char** argv)
     //     torch::Tensor poses_final = output2.at("pos").toTensor();
     //     for (int i = 0; i < nat; i++) {
     //         std::cout << i << ": " << poses_final[i][0].item<float>() << ", " << poses_final[i][1].item<float>() << ", " << poses_final[i][2].item<float>() << std::endl;
-    //     // std::cout << i << ": " << atoms1[i * 3 + 0] << ", " << atoms1[i * 3 + 1] << ", " << atoms1[i * 3 + 2] << std::endl;
+    //     std::cout << i << ": " << atoms_answer[i * 3 + 0] << ", " << atoms_answer[i * 3 + 1] << ", " << atoms_answer[i * 3 + 2] << std::endl;
     //     }
     // }
 }
