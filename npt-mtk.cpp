@@ -136,6 +136,7 @@ void  trapezoid(torch::jit::script::Module module,
 		float* atoms_ret,
                 int* atom_types_ret,
                 int* timestep_ret,
+                int* edges_ret,
                 /*float x_left,
                 float x_right,
                 float y_left,
@@ -317,29 +318,70 @@ void  trapezoid(torch::jit::script::Module module,
             atoms_ret[i * 3 + 0] = pos_fullstep[i][0];
             atoms_ret[i * 3 + 1] = pos_fullstep[i][1];
             atoms_ret[i * 3 + 2] = pos_fullstep[i][2];
-	    if (((pos_fullstep[i][0] >= new_x_left &&
-                  pos_fullstep[i][0] <= new_x_right) ||
+	    timestep_ret[i] = t0;
+            edges_ret[i] = 1;
+	    if ((((pos_fullstep[i][0] > new_x_left || !x_left_cut) &&
+                  (pos_fullstep[i][0] < new_x_right || !x_right_cut)) ||
 		 pos_fullstep[i][0] != pos_fullstep[i][0]) &&
-	        ((pos_fullstep[i][1] >= new_y_left &&
-	          pos_fullstep[i][1] <= new_y_right) ||
+	        (((pos_fullstep[i][1] > new_y_left || !y_left_cut) &&
+	          (pos_fullstep[i][1] < new_y_right || !y_right_cut)) ||
 		 pos_fullstep[i][1] != pos_fullstep[i][1]) &&
-	        ((pos_fullstep[i][2] >= new_z_left &&
-	          pos_fullstep[i][2] <= new_z_right) ||
+	        (((pos_fullstep[i][2] > new_z_left || !z_left_cut) &&
+	          (pos_fullstep[i][2] < new_z_right || !z_right_cut)) ||
 		 pos_fullstep[i][2] != pos_fullstep[i][2])) {
 
                 // would not have gotten cut next step
 		// not on the edge
-		timestep_ret[i] = t1;
+		// timestep_ret[i] = t1;
 		// std::cout << "not on edge, t1: " << t1 << std::endl;
                 // to_return[i][3] = static_cast<float>(t1);
 		//     std::cout << "returning: " << to_return[i][3] << std::endl;
+                // std::cout << i << ": not on edge" << std::endl;
+		// std::cout << "    " << (pos_fullstep[i][0] != pos_fullstep[i][0]) << std::endl;
 
 	    } else {
                 // woudl have gotten cut next step
 		// on edge
 		// std::cout << "adding something to edge, only possible w space cut" << std::endl;
 		// to_return[i][3] = static_cast<float>(t0);
-		timestep_ret[i] = t0;
+		// timestep_ret[i] = t0;
+                // std::cout << i << ": on edge" << std::endl;
+	        if (pos_fullstep[i][0] == pos_fullstep[i][0] &&
+                    pos_fullstep[i][0] <= new_x_left && x_left_cut) {
+                    // cut next step x
+                    // std::cout << "    x left" << std::endl;
+		    edges_ret[i] *= 2;
+		}
+	        if (pos_fullstep[i][0] == pos_fullstep[i][0] &&
+                    pos_fullstep[i][0] >= new_x_right && x_right_cut) {
+                    // cut next step x
+                    // std::cout << "    x right" << std::endl;
+		    edges_ret[i] *= 3;
+	        }
+	        if (pos_fullstep[i][1] == pos_fullstep[i][1] &&
+                    pos_fullstep[i][1] <= new_y_left && y_left_cut) {
+                    // cut next step y
+                    // std::cout << "    y left" << std::endl;
+		    edges_ret[i] *= 5;
+		}
+	        if (pos_fullstep[i][1] == pos_fullstep[i][1] &&
+                    pos_fullstep[i][1] >= new_y_right && y_right_cut) {
+                    // cut next step y
+                    // std::cout << "    y right" << std::endl;
+		    edges_ret[i] *= 7;
+	        }
+	        if (pos_fullstep[i][2] == pos_fullstep[i][2] &&
+                    pos_fullstep[i][2] <= new_z_left && z_left_cut) {
+                    // cut next step z
+                    // std::cout << "    z left" << std::endl;
+		    edges_ret[i] *= 11;
+		}
+	        if (pos_fullstep[i][2] == pos_fullstep[i][2] &&
+                    pos_fullstep[i][2] >= new_z_right && z_right_cut) {
+                    // cut next step z
+                    // std::cout << "    z right" << std::endl;
+		    edges_ret[i] *= 13;
+	        }
 	    }
 	    atom_types_ret[i] = atom_types1[i];
 	    // to_return[i][4] = static_cast<float>(atom_types1[i]);
@@ -359,7 +401,7 @@ void  trapezoid(torch::jit::script::Module module,
 	// which axis (xyz) to use ?
 	// calc xyz max min, calc xyz average
 	// if enough atoms have xyz < xyz ave - delta_t * 3 * r and xyz > xyz ave + delta_t * 3 * r, do xyz cut
-	if (t0 == 0 && t1 == 5 && nat1 == 768) {
+	if (t0 == 0 && t1 == 5 && nat1 == 764) {
             std::cout << "checking if space cut possible" << std::endl;
 	    std::vector<float> xs;
 	    for (int i = 0; i < nat1; i++) {
@@ -409,6 +451,7 @@ void  trapezoid(torch::jit::script::Module module,
 	        float* atoms_left_final = new float[nat_below_x * 3];
 	        int* atom_types_left_final = new int[nat_below_x];
 	        int* atom_times_left_final = new int[nat_below_x];
+	        int* atom_edges_left_final = new int[nat_below_x];
 	        trapezoid(module,
 	                  t0,
 	                  t1,
@@ -418,6 +461,7 @@ void  trapezoid(torch::jit::script::Module module,
 	                  atoms_left_final,
 	                  atom_types_left_final,
 	                  atom_times_left_final,
+	                  atom_edges_left_final,
 	                  /*x_left,
 	                  x_right,
 	                  y_left,
@@ -439,6 +483,7 @@ void  trapezoid(torch::jit::script::Module module,
 	        float* atoms_right_final = new float[nat_above_x * 3];
 	        int* atom_types_right_final = new int[nat_above_x];
 	        int* atom_times_right_final = new int[nat_above_x];
+	        int* atom_edges_right_final = new int[nat_above_x];
 	        trapezoid(module,
 	                  t0,
 	                  t1,
@@ -448,6 +493,7 @@ void  trapezoid(torch::jit::script::Module module,
 	                  atoms_right_final,
 	                  atom_types_right_final,
 	                  atom_times_right_final,
+	                  atom_edges_right_final,
 	                  /*x_left,
 	                  x_right,
 	                  y_left,
@@ -469,6 +515,22 @@ void  trapezoid(torch::jit::script::Module module,
 		// i think i should add arr saying which edge (or neither) each atom is on
 		// i think this also needs the info to distinguish if atom is on x or y or z edge
 		// this is to distinguish edges i need to combine in the center from true outer edges
+		int nat_this_step = 0;
+		for (int i = t0; i < t1 - 1; i++) {
+                    for (int j = 0; j < nat_above_x; j++) {
+                        if (atom_times_right_final[j] == i && atom_edges_right_final[j] % 2 == 0) {
+                            std::cout << i << ": found atom on edge" << std::endl;
+			    nat_this_step++;
+			}
+		    }
+                    for (int j = 0; j < nat_below_x; j++) {
+                        if (atom_times_left_final[j] == i && atom_edges_left_final[j] % 3 == 0) {
+                            std::cout << i << ": found atom on edge" << std::endl;
+			    nat_this_step++;
+			}
+		    }
+		    std::cout << "nat this step: " << nat_this_step << std::endl;
+		}
 	        return;
 	    }
 	}
@@ -569,6 +631,7 @@ void  trapezoid(torch::jit::script::Module module,
 	float* atoms_bottom = new float[nat1 * 3];
 	int* atom_types_bottom = new int[nat1];
 	int* atom_times_bottom = new int[nat1];
+	int* atom_edges_bottom = new int[nat1];
 	trapezoid(module,
 	          t0,
 	          t0 + halftime,
@@ -578,6 +641,7 @@ void  trapezoid(torch::jit::script::Module module,
 	          atoms_bottom,
 	          atom_types_bottom,
 	          atom_times_bottom,
+	          atom_edges_bottom,
 	          /*x_left,
 	          x_right,
 	          y_left,
@@ -603,7 +667,7 @@ void  trapezoid(torch::jit::script::Module module,
 	int j = 0;
         // std::cout << "poses before upper, t0: " << t0 << ", t1: " << t1 << std::endl;
 	for (int k = 0; k < nat1; k++) {
-	    if ( atom_times_bottom[k] == t0 + halftime ) {
+	    if ( atom_edges_bottom[k] == 1 ) {
                 // top row of atoms, will not get cut on next time step
 	        // std::cout << k << ": " << atoms_bottom[k * 3 + 0] << ", " << atoms_bottom[k * 3 + 1] << ", " << atoms_bottom[k * 3 + 2] << std::endl;
 	        atoms_left[nat_left * 3 + 0] = atoms_bottom[k * 3 + 0];
@@ -620,6 +684,7 @@ void  trapezoid(torch::jit::script::Module module,
                 atoms_ret[j * 3 + 2] = atoms_bottom[k * 3 + 2];
 	        atom_types_ret[j] = atom_types_bottom[k];
 	        timestep_ret[j] = atom_times_bottom[k];
+	        edges_ret[j] = atom_edges_bottom[k];
 	        j++;
 	    }
 	}
@@ -647,6 +712,7 @@ void  trapezoid(torch::jit::script::Module module,
 	float* atoms_top = new float[nat_left * 3];
 	int* atom_types_top = new int[nat_left];
 	int* atom_times_top = new int[nat_left];
+	int* atom_edges_top = new int[nat_left];
 	/*float new_x_left = x_left;
 	float new_x_right = x_right;
 	float new_y_left = y_left;
@@ -680,6 +746,7 @@ void  trapezoid(torch::jit::script::Module module,
 	          atoms_top,
 	          atom_types_top,
 	          atom_times_top,
+	          atom_edges_top,
 	          /*new_x_left,
 	          new_x_right,
 	          new_y_left,
@@ -699,6 +766,7 @@ void  trapezoid(torch::jit::script::Module module,
             atoms_ret[j * 3 + 2] = atoms_top[i * 3 + 2];
 	    atom_types_ret[j] = atom_types_top[i];
 	    timestep_ret[j] = atom_times_top[i];
+	    edges_ret[j] = atom_edges_top[i];
 	    j++;
 	}
 	std::cout << "nat total: " << nat1 << std::endl;
@@ -825,10 +893,19 @@ int main(int argc, char** argv)
     float y_right = y_left;
     float z_left = pos_param[0][2].item<float>();
     float z_right = z_left;*/
+    int real_nat = 0;
     for (int i = 0; i < nat; i++) {
-        atoms1[i * 3 + 0] = pos_param[i][0].item<float>();
-        atoms1[i * 3 + 1] = pos_param[i][1].item<float>();
-        atoms1[i * 3 + 2] = pos_param[i][2].item<float>();
+        if (pos_param[i][0].item<float>() == pos_param[i][0].item<float>() &&
+            pos_param[i][1].item<float>() == pos_param[i][1].item<float>() &&
+            pos_param[i][2].item<float>() == pos_param[i][2].item<float>()) {
+            atoms1[real_nat * 3 + 0] = pos_param[i][0].item<float>();
+            atoms1[real_nat * 3 + 1] = pos_param[i][1].item<float>();
+            atoms1[real_nat * 3 + 2] = pos_param[i][2].item<float>();
+            real_nat++;
+	}
+        // atoms1[i * 3 + 0] = pos_param[i][0].item<float>();
+        // atoms1[i * 3 + 1] = pos_param[i][1].item<float>();
+        // atoms1[i * 3 + 2] = pos_param[i][2].item<float>();
         // std::cout << "pos param: " << pos_param[i][0].item<float>() << ", " << pos_param[i][1].item<float>() << ", " << pos_param[i][2].item<float>() << std::endl;
         // std::cout << "atoms1: " << atoms1[i][0] << ", " << atoms1[i][1] << ", " << atoms1[i][2] << std::endl;
         /*x_left = std::min(atoms1[i * 3 + 0], x_left);
@@ -841,18 +918,20 @@ int main(int argc, char** argv)
     std::cout << "starting zoid lol" << std::endl;
     std::cout << "num steps again: " << num_steps << std::endl;
     // module.eval();
-    float* atoms_answer = new float[nat];
-    int* atoms_types = new int[nat];
-    int* atoms_times = new int[nat];
+    float* atoms_answer = new float[real_nat];
+    int* atoms_types = new int[real_nat];
+    int* atoms_times = new int[real_nat];
+    int* atoms_edges = new int[real_nat];
     trapezoid(module,
               0,
               num_steps,
-              nat,
+              real_nat,
               atoms1,
               arr,
               atoms_answer,
               atoms_types,
               atoms_times,
+              atoms_edges,
               /*x_left,
               x_right,
               y_left,
