@@ -465,6 +465,10 @@ void  trapezoid(torch::jit::script::Module module,
                 // for (int i = 0; i < nat_below_x; i++) {
                 //     std::cout << i << ": " << atoms_left_final[i * 3 + 0] << ", " << atoms_left_final[i * 3 + 1] << ", " << atoms_left_final[i * 3 + 2] << std::endl;
 	        // }
+		// TODO: combine and update return arrs
+		// i think i should add arr saying which edge (or neither) each atom is on
+		// i think this also needs the info to distinguish if atom is on x or y or z edge
+		// this is to distinguish edges i need to combine in the center from true outer edges
 	        return;
 	    }
 	}
