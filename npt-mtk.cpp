@@ -137,6 +137,7 @@ void  trapezoid(torch::jit::script::Module module,
                 int* atom_types_ret,
                 int* timestep_ret,
                 int* edges_ret,
+                float* edges_ret_pre_pos,
                 /*float x_left,
                 float x_right,
                 float y_left,
@@ -356,6 +357,9 @@ void  trapezoid(torch::jit::script::Module module,
             atoms_ret[i * 3 + 0] = pos_fullstep[i][0];
             atoms_ret[i * 3 + 1] = pos_fullstep[i][1];
             atoms_ret[i * 3 + 2] = pos_fullstep[i][2];
+            edges_ret_pre_pos[i * 3 + 0] = atoms1[i * 3 + 0];
+            edges_ret_pre_pos[i * 3 + 1] = atoms1[i * 3 + 1];
+            edges_ret_pre_pos[i * 3 + 2] = atoms1[i * 3 + 2];
 	    timestep_ret[i] = t1;
             edges_ret[i] = 1;
 	    if ((((pos_fullstep[i][0] > new_x_left || !x_left_cut) &&
@@ -521,6 +525,7 @@ void  trapezoid(torch::jit::script::Module module,
 	        int* atom_types_left_final = new int[nat_below_x];
 	        int* atom_times_left_final = new int[nat_below_x];
 	        int* atom_edges_left_final = new int[nat_below_x];
+	        float* atom_edges_left_final_pre_pos = new float[nat_below_x * 3];
 	        trapezoid(module,
 	                  t0,
 	                  t1,
@@ -531,6 +536,7 @@ void  trapezoid(torch::jit::script::Module module,
 	                  atom_types_left_final,
 	                  atom_times_left_final,
 	                  atom_edges_left_final,
+	                  atom_edges_left_final_pre_pos,
 	                  /*x_left,
 	                  x_right,
 	                  y_left,
@@ -553,6 +559,7 @@ void  trapezoid(torch::jit::script::Module module,
 	        int* atom_types_right_final = new int[nat_above_x];
 	        int* atom_times_right_final = new int[nat_above_x];
 	        int* atom_edges_right_final = new int[nat_above_x];
+	        float* atom_edges_right_final_pre_pos = new float[nat_above_x * 3];
 	        trapezoid(module,
 	                  t0,
 	                  t1,
@@ -563,6 +570,7 @@ void  trapezoid(torch::jit::script::Module module,
 	                  atom_types_right_final,
 	                  atom_times_right_final,
 	                  atom_edges_right_final,
+	                  atom_edges_right_final_pre_pos,
 	                  /*x_left,
 	                  x_right,
 	                  y_left,
@@ -584,34 +592,100 @@ void  trapezoid(torch::jit::script::Module module,
 		// i think i should add arr saying which edge (or neither) each atom is on
 		// i think this also needs the info to distinguish if atom is on x or y or z edge
 		// this is to distinguish edges i need to combine in the center from true outer edges
+		// first layer: indices correspond exactly, can go from output atoms to input atoms directly
+		// find corresponding input for both inac and edge atoms, update inac atoms
+		// gah i think i need both edge atoms and the input atoms that led to those edge atoms
 		int nat_this_step = 0;
 		int inac_atoms = 0;
+	        float* atoms_merged_input = new float[nat1 * 3];
+	        int* atom_types_merged_input = new int[nat1];
+	        float* atoms_merged = new float[nat1 * 3];
+	        int* atom_types_merged = new int[nat1];
+	        int* atom_times_merged = new int[nat1];
+	        int* atom_edges_merged = new int[nat1];
+	        float* atom_edges_pre_pos_merged = new float[nat1 * 3];
+	        float* atom_edges_output_merged = new float[nat1 * 3];
 		for (int i = t0 + 1; i < t1; i++) {
                     for (int j = 0; j < nat_above_x; j++) {
                         if (atom_times_right_final[j] == i && atom_edges_right_final[j] % 2 == 0) {
+                            atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 0] = atom_edges_right_final_pre_pos[j * 3 + 0];
+                            atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 1] = atom_edges_right_final_pre_pos[j * 3 + 1];
+                            atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 2] = atom_edges_right_final_pre_pos[j * 3 + 2];
+			    atom_types_merged_input[inac_atoms + nat_this_step] = atom_types_right_final[j];
                             if (atom_edges_right_final[j] == 0) {
                                 std::cout << i << ": found inaccurate atom" << std::endl;
 				inac_atoms++;
 			    } else {
                                 std::cout << i << ": found atom on edge" << std::endl;
+                                atom_edges_output_merged[(inac_atoms + nat_this_step) * 3 + 0] = atoms_right_final[j * 3 + 0];
+                                atom_edges_output_merged[(inac_atoms + nat_this_step) * 3 + 1] = atoms_right_final[j * 3 + 1];
+                                atom_edges_output_merged[(inac_atoms + nat_this_step) * 3 + 2] = atoms_right_final[j * 3 + 2];
 			        nat_this_step++;
 			    }
 			}
 		    }
                     for (int j = 0; j < nat_below_x; j++) {
                         if (atom_times_left_final[j] == i && atom_edges_left_final[j] % 3 == 0) {
+                            atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 0] = atom_edges_left_final_pre_pos[j * 3 + 0];
+                            atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 1] = atom_edges_left_final_pre_pos[j * 3 + 1];
+                            atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 2] = atom_edges_left_final_pre_pos[j * 3 + 2];
+			    atom_types_merged_input[inac_atoms + nat_this_step] = atom_types_left_final[j];
                             if (atom_edges_left_final[j] == 0) {
                                 std::cout << i << ": found inaccurate atom" << std::endl;
 				inac_atoms++;
 			    } else {
                                 std::cout << i << ": found atom on edge" << std::endl;
+                                atom_edges_output_merged[(inac_atoms + nat_this_step) * 3 + 0] = atoms_left_final[j * 3 + 0];
+                                atom_edges_output_merged[(inac_atoms + nat_this_step) * 3 + 1] = atoms_left_final[j * 3 + 1];
+                                atom_edges_output_merged[(inac_atoms + nat_this_step) * 3 + 2] = atoms_left_final[j * 3 + 2];
 			        nat_this_step++;
 			    }
 			}
 		    }
 		    std::cout << "nat this step: " << nat_this_step << std::endl;
 		    std::cout << "inac atoms: " << inac_atoms << std::endl;
+	            trapezoid(module,
+	                      i,
+	                      i + 1,
+	                      inac_atoms + nat_this_step,
+	                      atoms_merged_input,
+	                      atom_types_merged_input,
+	                      atoms_merged,
+	                      atom_types_merged,
+	                      atom_times_merged,
+	                      atom_edges_merged,
+	                      atom_edges_pre_pos_merged,
+	                      true,
+	                      true,
+	                      y_left_cut,
+	                      y_right_cut,
+	                      z_left_cut,
+	                      z_right_cut);
+                    for (int j = 0; j < inac_atoms + nat_this_step; j++) {
+			// if it's an edge instead of an inac one, we need to replace its value w the correct edge here
+			// cant replace it w atoms_merged data since it's on the edge so it'll be wrong here
+			if (atom_edges_merged[j] == 0) {
+                            // inac for merged data, means it is on edge
+                            atoms_merged_input[j * 3 + 0] = atom_edges_output_merged[j * 3 + 0];
+                            atoms_merged_input[j * 3 + 1] = atom_edges_output_merged[j * 3 + 1];
+                            atoms_merged_input[j * 3 + 2] = atom_edges_output_merged[j * 3 + 2];
+			} else {
+                            atoms_merged_input[j * 3 + 0] = atoms_merged[j * 3 + 0];
+                            atoms_merged_input[j * 3 + 1] = atoms_merged[j * 3 + 1];
+                            atoms_merged_input[j * 3 + 2] = atoms_merged[j * 3 + 2];
+			}
+		    }
+		    // need to update yz edges here too i think
 		}
+		// update return values, dont double count edges
+		// add l/r trap data to output
+                for (int j = 0; j < inac_atoms + nat_this_step; j++) {
+                    if (atom_edges_merged[j] == 0) {
+                        // inac for merged data, means it is on edge, already in l/r trap data
+                    } else {
+                        // add to output
+                    }
+                }
 	        return;
 	    }
 	}
@@ -713,6 +787,7 @@ void  trapezoid(torch::jit::script::Module module,
 	int* atom_types_bottom = new int[nat1];
 	int* atom_times_bottom = new int[nat1];
 	int* atom_edges_bottom = new int[nat1];
+	float* atom_edges_bottom_pre_pos = new float[nat1 * 3];
 	trapezoid(module,
 	          t0,
 	          t0 + halftime,
@@ -723,6 +798,7 @@ void  trapezoid(torch::jit::script::Module module,
 	          atom_types_bottom,
 	          atom_times_bottom,
 	          atom_edges_bottom,
+	          atom_edges_bottom_pre_pos,
 	          /*x_left,
 	          x_right,
 	          y_left,
@@ -767,6 +843,9 @@ void  trapezoid(torch::jit::script::Module module,
                 atoms_ret[j * 3 + 0] = atoms_bottom[k * 3 + 0];
                 atoms_ret[j * 3 + 1] = atoms_bottom[k * 3 + 1];
                 atoms_ret[j * 3 + 2] = atoms_bottom[k * 3 + 2];
+                edges_ret_pre_pos[j * 3 + 0] = atom_edges_bottom_pre_pos[k * 3 + 0];
+                edges_ret_pre_pos[j * 3 + 1] = atom_edges_bottom_pre_pos[k * 3 + 1];
+                edges_ret_pre_pos[j * 3 + 2] = atom_edges_bottom_pre_pos[k * 3 + 2];
 	        atom_types_ret[j] = atom_types_bottom[k];
 	        timestep_ret[j] = atom_times_bottom[k];
 	        edges_ret[j] = atom_edges_bottom[k];
@@ -798,6 +877,7 @@ void  trapezoid(torch::jit::script::Module module,
 	int* atom_types_top = new int[nat_left];
 	int* atom_times_top = new int[nat_left];
 	int* atom_edges_top = new int[nat_left];
+	float* atom_edges_top_pre_pos = new float[nat_left * 3];
 	/*float new_x_left = x_left;
 	float new_x_right = x_right;
 	float new_y_left = y_left;
@@ -832,6 +912,7 @@ void  trapezoid(torch::jit::script::Module module,
 	          atom_types_top,
 	          atom_times_top,
 	          atom_edges_top,
+	          atom_edges_top_pre_pos,
 	          /*new_x_left,
 	          new_x_right,
 	          new_y_left,
@@ -850,6 +931,9 @@ void  trapezoid(torch::jit::script::Module module,
                 atoms_ret[j * 3 + 0] = atoms_top[i * 3 + 0];
                 atoms_ret[j * 3 + 1] = atoms_top[i * 3 + 1];
                 atoms_ret[j * 3 + 2] = atoms_top[i * 3 + 2];
+                edges_ret_pre_pos[j * 3 + 0] = atom_edges_top_pre_pos[i * 3 + 0];
+                edges_ret_pre_pos[j * 3 + 1] = atom_edges_top_pre_pos[i * 3 + 1];
+                edges_ret_pre_pos[j * 3 + 2] = atom_edges_top_pre_pos[i * 3 + 2];
 	        atom_types_ret[j] = atom_types_top[i];
 	        timestep_ret[j] = atom_times_top[i];
 	        edges_ret[j] = atom_edges_top[i];
@@ -1009,6 +1093,7 @@ int main(int argc, char** argv)
     int* atoms_types = new int[real_nat];
     int* atoms_times = new int[real_nat];
     int* atoms_edges = new int[real_nat];
+    float* atoms_edges_pre_pos = new float[real_nat * 3];
     trapezoid(module,
               0,
               num_steps,
@@ -1019,6 +1104,7 @@ int main(int argc, char** argv)
               atoms_types,
               atoms_times,
               atoms_edges,
+              atoms_edges_pre_pos,
               /*x_left,
               x_right,
               y_left,
