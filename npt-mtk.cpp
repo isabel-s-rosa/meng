@@ -652,7 +652,11 @@ void  trapezoid(torch::jit::script::Module module,
                             edges_ret_pre_pos[nat_merged * 3 + 2] = atom_edges_right_final_pre_pos[j * 3 + 2];
 	                    atom_types_ret[nat_merged] = atom_types_right_final[j];
 	                    timestep_ret[nat_merged] = atom_times_right_final[j];
-	                    edges_ret[nat_merged] = atom_edges_right_final[j];
+			    if (i == t1 && atom_edges_right_final[j] % 2 == 0) {
+	                        edges_ret[nat_merged] = atom_edges_right_final[j] / 2;
+			    } else {
+	                        edges_ret[nat_merged] = atom_edges_right_final[j];
+			    }
 	                    nat_merged++;
 			}
 		    }
@@ -694,13 +698,17 @@ void  trapezoid(torch::jit::script::Module module,
                             edges_ret_pre_pos[nat_merged * 3 + 2] = atom_edges_left_final_pre_pos[j * 3 + 2];
 	                    atom_types_ret[nat_merged] = atom_types_left_final[j];
 	                    timestep_ret[nat_merged] = atom_times_left_final[j];
-	                    edges_ret[nat_merged] = atom_edges_left_final[j];
+			    if (i == t1 && atom_edges_right_final[j] % 3 == 0) {
+	                        edges_ret[nat_merged] = atom_edges_left_final[j] / 3;
+			    } else {
+	                        edges_ret[nat_merged] = atom_edges_left_final[j];
+			    }
 	                    nat_merged++;
 			}
 		    }
 		    if (i == t0 + 1) {
                         for (int j = 0; j < nat_above_x; j++) {
-                            if (atom_times_right_final[j] == i && atom_edges_right_final[j] == 2) {
+                            if (atom_times_right_final[j] == i && atom_edges_right_final[j] % 2 == 0 && atom_edges_right_final[j] != 0) {
                                 atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 0] = atom_edges_right_final_pre_pos[j * 3 + 0];
                                 atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 1] = atom_edges_right_final_pre_pos[j * 3 + 1];
                                 atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 2] = atom_edges_right_final_pre_pos[j * 3 + 2];
@@ -715,7 +723,7 @@ void  trapezoid(torch::jit::script::Module module,
 			    }
 			}
                         for (int j = 0; j < nat_below_x; j++) {
-                            if (atom_times_left_final[j] == i && atom_edges_left_final[j] == 3) {
+                            if (atom_times_left_final[j] == i && atom_edges_left_final[j] % 3 == 0 && atom_edges_left_final[j] != 0) {
                                 atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 0] = atom_edges_left_final_pre_pos[j * 3 + 0];
                                 atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 1] = atom_edges_left_final_pre_pos[j * 3 + 1];
                                 atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 2] = atom_edges_left_final_pre_pos[j * 3 + 2];
@@ -795,6 +803,19 @@ void  trapezoid(torch::jit::script::Module module,
 	                        atom_types_ret[nat_merged] = atom_types_merged[j];
 	                        timestep_ret[nat_merged] = atom_times_merged[j];
 	                        edges_ret[nat_merged] = atom_edges_merged[j];
+				// merged atoms on top row should no longer be x edges
+				if (edges_ret[nat_merged] == 0) {
+                                    // again wrong i think, want to allow incorrect atoms on other edges
+				    // altho i dont think there should be any of those?
+				    // so actually i think this is okay
+                                    edges_ret[nat_merged] = 1;
+				}
+				if (edges_ret[nat_merged] % 2 == 0) {
+                                    edges_ret[nat_merged] = edges_ret[nat_merged] / 2;
+				}
+				if (edges_ret[nat_merged] % 3 == 0) {
+                                    edges_ret[nat_merged] = edges_ret[nat_merged] / 3;
+				}
 	                        nat_merged++;
 		            }
 			}
