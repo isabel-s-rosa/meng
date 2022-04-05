@@ -1213,13 +1213,13 @@ int main(int argc, char** argv)
 	std::string str2 ("pos");
         if (entry->data_t == data_f && str1.compare(str2) == 0) {
             pos_param = torch::from_blob((float*) entry->data, {rows, cols}).to(torch::kFloat);
-	    if (str1.compare(str2) == 0) {
-                AtomGraph system(pos_param, nat, 3.0);
-		torch::Tensor edges = system.edges();
-		dictionary.insert("edge_index", edges);
-		std::cout << "Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
-	    }
-            dictionary.insert(entry->key, pos_param);
+	    // if (str1.compare(str2) == 0) {
+            //     AtomGraph system(pos_param, nat, 3.0);
+	    //     torch::Tensor edges = system.edges();
+	    //     dictionary.insert("edge_index", edges);
+	    //     std::cout << "Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
+	    // }
+            // dictionary.insert(entry->key, pos_param);
        } else if (entry->data_t == data_s) {
             for (int j=0; j<cols; j++) {
                 std::string type(((char**) (entry->data))[j]);
@@ -1229,15 +1229,94 @@ int main(int argc, char** argv)
                     arr[j] = 1;
                 }
             }
-	    auto options = torch::TensorOptions().dtype(torch::kInt32);
-            torch::Tensor t = torch::from_blob(arr, {cols, 1}, options=options).to(torch::kInt64);
-            dictionary.insert("atom_types", t);
+	    // auto options = torch::TensorOptions().dtype(torch::kInt32);
+            // torch::Tensor t = torch::from_blob(arr, {cols, 1}, options=options).to(torch::kInt64);
+            // dictionary.insert("atom_types", t);
         }
     }
 
-    torch::Tensor t3 = torch::randint(0, 1, {nat}).to(torch::kLong);
-    dictionary.insert("batch", t3);
-    inputs.push_back(dictionary);
+    // torch::Tensor t3 = torch::randint(0, 1, {nat}).to(torch::kLong);
+    // dictionary.insert("batch", t3);
+    // inputs.push_back(dictionary);
+
+    float* atoms1 = new float[nat * 3];
+    int* atom_types1 = new int[nat];
+    /*float x_left = pos_param[0][0].item<float>();
+    float x_right = x_left;
+    float y_left = pos_param[0][1].item<float>();
+    float y_right = y_left;
+    float z_left = pos_param[0][2].item<float>();
+    float z_right = z_left;*/
+    int real_nat = 0;
+    for (int i = 0; i < nat; i++) {
+        if (pos_param[i][0].item<float>() == pos_param[i][0].item<float>() &&
+            pos_param[i][1].item<float>() == pos_param[i][1].item<float>() &&
+            pos_param[i][2].item<float>() == pos_param[i][2].item<float>()) {
+            atoms1[real_nat * 3 + 0] = pos_param[i][0].item<float>();
+            atoms1[real_nat * 3 + 1] = pos_param[i][1].item<float>();
+            atoms1[real_nat * 3 + 2] = pos_param[i][2].item<float>();
+	    atom_types1[real_nat] = arr[i];
+            real_nat++;
+        }
+        // atoms1[i * 3 + 0] = pos_param[i][0].item<float>();
+        // atoms1[i * 3 + 1] = pos_param[i][1].item<float>();
+        // atoms1[i * 3 + 2] = pos_param[i][2].item<float>();
+        // std::cout << "pos param: " << pos_param[i][0].item<float>() << ", " << pos_param[i][1].item<float>() << ", " << pos_param[i][2].item<float>() << std::endl;
+        // std::cout << "atoms1: " << atoms1[i][0] << ", " << atoms1[i][1] << ", " << atoms1[i][2] << std::endl;
+        /*x_left = std::min(atoms1[i * 3 + 0], x_left);
+        y_left = std::min(atoms1[i * 3 + 1], y_left);
+        y_left = std::min(atoms1[i * 3 + 2], z_left);
+        x_right = std::max(atoms1[i * 3 + 0], x_right);
+        y_right = std::max(atoms1[i * 3 + 1], y_right);
+        y_right = std::max(atoms1[i * 3 + 2], z_right);*/
+    }
+
+    std::cout << "starting zoid lol" << std::endl;
+    std::cout << "num steps again: " << num_steps << std::endl;
+    // module.eval();
+    float* atoms_answer = new float[real_nat];
+    int* atoms_types = new int[real_nat];
+    int* atoms_times = new int[real_nat];
+    int* atoms_edges = new int[real_nat];
+    float* atoms_edges_pre_pos = new float[real_nat * 3];
+    trapezoid(module,
+              0,
+              num_steps,
+              real_nat,
+              atoms1,
+              atom_types1,
+              atoms_answer,
+              atoms_types,
+              atoms_times,
+              atoms_edges,
+              atoms_edges_pre_pos,
+              /*x_left,
+              x_right,
+              y_left,
+              y_right,
+              z_left,
+              z_right,*/
+              false,
+              false,
+              false,
+              false,
+              false,
+              false);
+    std::cout << "ZOID DONE ------------------------------------------------------------------" << std::endl;
+
+    // nat = real_nat;
+    // pos_param = torch::from_blob(atoms1, {nat, 3}).to(torch::kFloat);
+    // AtomGraph system(pos_param, nat, 3.0);
+    // torch::Tensor edges = system.edges();
+    // dictionary.insert("edge_index", edges);
+    // std::cout << "Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
+    // dictionary.insert("pos", pos_param);
+    // auto options = torch::TensorOptions().dtype(torch::kInt32);
+    // torch::Tensor t = torch::from_blob(atom_types1, {nat, 1}, options=options).to(torch::kInt64);
+    // dictionary.insert("atom_types", t);
+    // torch::Tensor t3 = torch::randint(0, 1, {nat}).to(torch::kLong);
+    // dictionary.insert("batch", t3);
+    // inputs.push_back(dictionary);
 
     // // Execute the model and turn its output into a tensor.
     // // module.eval();
@@ -1267,68 +1346,6 @@ int main(int argc, char** argv)
     // // auto atomic_energies = atomic_energy_tensor.accessor<float, 2>();
     // float atomic_energy_sum = atomic_energy_tensor.sum().data_ptr<float>()[0];
     // std::cout << "Atomic energy sum: " << atomic_energy_sum << std::endl;
-
-    float* atoms1 = new float[nat * 3];
-    /*float x_left = pos_param[0][0].item<float>();
-    float x_right = x_left;
-    float y_left = pos_param[0][1].item<float>();
-    float y_right = y_left;
-    float z_left = pos_param[0][2].item<float>();
-    float z_right = z_left;*/
-    int real_nat = 0;
-    for (int i = 0; i < nat; i++) {
-        if (pos_param[i][0].item<float>() == pos_param[i][0].item<float>() &&
-            pos_param[i][1].item<float>() == pos_param[i][1].item<float>() &&
-            pos_param[i][2].item<float>() == pos_param[i][2].item<float>()) {
-            atoms1[real_nat * 3 + 0] = pos_param[i][0].item<float>();
-            atoms1[real_nat * 3 + 1] = pos_param[i][1].item<float>();
-            atoms1[real_nat * 3 + 2] = pos_param[i][2].item<float>();
-            real_nat++;
-        }
-        // atoms1[i * 3 + 0] = pos_param[i][0].item<float>();
-        // atoms1[i * 3 + 1] = pos_param[i][1].item<float>();
-        // atoms1[i * 3 + 2] = pos_param[i][2].item<float>();
-        // std::cout << "pos param: " << pos_param[i][0].item<float>() << ", " << pos_param[i][1].item<float>() << ", " << pos_param[i][2].item<float>() << std::endl;
-        // std::cout << "atoms1: " << atoms1[i][0] << ", " << atoms1[i][1] << ", " << atoms1[i][2] << std::endl;
-        /*x_left = std::min(atoms1[i * 3 + 0], x_left);
-        y_left = std::min(atoms1[i * 3 + 1], y_left);
-        y_left = std::min(atoms1[i * 3 + 2], z_left);
-        x_right = std::max(atoms1[i * 3 + 0], x_right);
-        y_right = std::max(atoms1[i * 3 + 1], y_right);
-        y_right = std::max(atoms1[i * 3 + 2], z_right);*/
-    }
-    std::cout << "starting zoid lol" << std::endl;
-    std::cout << "num steps again: " << num_steps << std::endl;
-    // module.eval();
-    float* atoms_answer = new float[real_nat];
-    int* atoms_types = new int[real_nat];
-    int* atoms_times = new int[real_nat];
-    int* atoms_edges = new int[real_nat];
-    float* atoms_edges_pre_pos = new float[real_nat * 3];
-    trapezoid(module,
-              0,
-              num_steps,
-              real_nat,
-              atoms1,
-              arr,
-              atoms_answer,
-              atoms_types,
-              atoms_times,
-              atoms_edges,
-              atoms_edges_pre_pos,
-              /*x_left,
-              x_right,
-              y_left,
-              y_right,
-              z_left,
-              z_right,*/
-              false,
-              false,
-              false,
-              false,
-              false,
-              false);
-    std::cout << "ZOID DONE ------------------------------------------------------------------" << std::endl;
 
     // for (int step = 0; step < num_steps; step++) {
     //     torch::Tensor new_pos = output.at("pos").toTensor().detach();
@@ -1411,35 +1428,38 @@ int main(int argc, char** argv)
     //     std::vector<torch::jit::IValue> inputs2;
     //     torch::Dict<std::string, torch::Tensor> dictionary2;
 
-    //     for (DictEntry *entry = arrays; entry; entry = entry->next) {
-    //         int cols = 1;
-    //         if (entry->ncols != 0) {
-    //             cols = entry->ncols;
-    //         }
+    //     // for (DictEntry *entry = arrays; entry; entry = entry->next) {
+    //     //     int cols = 1;
+    //     //     if (entry->ncols != 0) {
+    //     //         cols = entry->ncols;
+    //     //     }
 
-    //         std::string str1 (entry->key);
-    //         if (entry->data_t == data_s) {
-    //             int arr[cols];
-    //             for (int j=0; j<cols; j++) {
-    //                 std::string type(((char**) (entry->data))[j]);
-    //                 if (type == "Hf") {
-    //                     arr[j] = 0;
-    //                 } else if (type == "O") {
-    //                     arr[j] = 1;
-    //                 }
-    //             }
-    //             auto options = torch::TensorOptions().dtype(torch::kInt32);
-    //             torch::Tensor t = torch::from_blob(arr, {cols, 1}, options=options).to(torch::kInt64);
-    //             dictionary2.insert("atom_types", t);
+    //     //     std::string str1 (entry->key);
+    //     //     if (entry->data_t == data_s) {
+    //     //         int arr[cols];
+    //     //         for (int j=0; j<cols; j++) {
+    //     //             std::string type(((char**) (entry->data))[j]);
+    //     //             if (type == "Hf") {
+    //     //                 arr[j] = 0;
+    //     //             } else if (type == "O") {
+    //     //                 arr[j] = 1;
+    //     //             }
+    //     //         }
+    //     //         auto options = torch::TensorOptions().dtype(torch::kInt32);
+    //     //         torch::Tensor t = torch::from_blob(arr, {cols, 1}, options=options).to(torch::kInt64);
+    //     //         dictionary2.insert("atom_types", t);
 
-    //             AtomGraph system(pos_updated_after_physics, cols, 5.0);
-    //             torch::Tensor edges = system.edges();
-    //             dictionary2.insert("edge_index", edges);
-    //             std::cout << "step: " << step << ", Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
-    //             dictionary2.insert("pos", pos_updated_after_physics);
-    //         }
-    //     }
+    //     //     }
+    //     // }
 
+    //     AtomGraph system(pos_updated_after_physics, nat, 3.0);
+    //     torch::Tensor edges = system.edges();
+    //     dictionary2.insert("edge_index", edges);
+    //     std::cout << "step: " << step << ", Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
+    //     dictionary2.insert("pos", pos_updated_after_physics);
+    //     auto options = torch::TensorOptions().dtype(torch::kInt32);
+    //     torch::Tensor t_2 = torch::from_blob(atom_types1, {nat, 1}, options=options).to(torch::kInt64);
+    //     dictionary2.insert("atom_types", t_2);
     //     torch::Tensor t3_2 = torch::randint(0, 1, {nat}).to(torch::kLong);
     //     dictionary2.insert("batch", t3_2);
     //     inputs2.push_back(dictionary2);
@@ -1473,11 +1493,24 @@ int main(int argc, char** argv)
     //     // auto atomic_energies = atomic_energy_tensor.accessor<float, 2>();
     //     float atomic_energy_sum2 = atomic_energy_tensor2.sum().data_ptr<float>()[0];
     //     std::cout << "step: " << step << ", Atomic energy sum: " << atomic_energy_sum2 << std::endl;
-    //     torch::Tensor poses_final = output2.at("pos").toTensor();
+    //     // torch::Tensor poses_final = output2.at("pos").toTensor();
+    //     // float sum_min_dist = 0;
+    //     // float max_min_dist = 0;
     //     // for (int i = 0; i < nat; i++) {
     //     //     std::cout << i << ": " << poses_final[i][0].item<float>() << ", " << poses_final[i][1].item<float>() << ", " << poses_final[i][2].item<float>() << std::endl;
-    //     // std::cout << i << ": " << atoms_answer[i * 3 + 0] << ", " << atoms_answer[i * 3 + 1] << ", " << atoms_answer[i * 3 + 2] << std::endl;
+    //     //     float min_dist = (poses_final[i][0].item<float>() - atoms_answer[i * 3 + 0]) * (poses_final[i][0].item<float>() - atoms_answer[i * 3 + 0]) + (poses_final[i][1].item<float>() - atoms_answer[i * 3 + 1]) * (poses_final[i][1].item<float>() - atoms_answer[i * 3 + 1]) + (poses_final[i][2].item<float>() - atoms_answer[i * 3 + 2]) * (poses_final[i][2].item<float>() - atoms_answer[i * 3 + 2]);
+    //     //     for (int j = 0; j < nat; j++) {
+    //     //         float min_dist2 = (poses_final[i][0].item<float>() - atoms_answer[j * 3 + 0]) * (poses_final[i][0].item<float>() - atoms_answer[j * 3 + 0]) + (poses_final[i][1].item<float>() - atoms_answer[j * 3 + 1]) * (poses_final[i][1].item<float>() - atoms_answer[j * 3 + 1]) + (poses_final[i][2].item<float>() - atoms_answer[j * 3 + 2]) * (poses_final[i][2].item<float>() - atoms_answer[j * 3 + 2]);
+    //     // 	min_dist = std::min(min_dist, min_dist2);
+    //     //         // std::cout << i << ": " << atoms_answer[i * 3 + 0] << ", " << atoms_answer[i * 3 + 1] << ", " << atoms_answer[i * 3 + 2] << std::endl;
+    //     //     }
+    //     //     sum_min_dist += min_dist;
+    //     //     max_min_dist = std::max(max_min_dist, min_dist);
+    //     //     // std::cout << i << " min dist: " << min_dist << std::endl;
     //     // }
+    //     // float ave_min_dist = sum_min_dist / nat;
+    //     // std::cout << "ave min dist: " << ave_min_dist << std::endl;
+    //     // std::cout << "max min dist: " << max_min_dist << std::endl;
     // }
 }
 
