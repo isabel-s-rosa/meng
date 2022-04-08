@@ -393,10 +393,10 @@ void  trapezoid(torch::jit::script::Module module,
                     // cut next step x
                     // std::cout << "    x left" << std::endl;
 		    edges_ret[i] *= 2;
-		    if (pos_fullstep[i][0] <= x_left) {
+		    if (pos_fullstep[i][0] <= x_left && edges_ret[i] > 0) {
                         // inaccurate
                         // std::cout << "    inac" << std::endl;
-                        edges_ret[i] = 0;
+                        edges_ret[i] *= -1;
 		    }
 		}
 	        if (pos_fullstep[i][0] == pos_fullstep[i][0] &&
@@ -404,10 +404,10 @@ void  trapezoid(torch::jit::script::Module module,
                     // cut next step x
                     // std::cout << "    x right" << std::endl;
 		    edges_ret[i] *= 3;
-		    if (pos_fullstep[i][0] >= x_right) {
+		    if (pos_fullstep[i][0] >= x_right && edges_ret[i] > 0) {
                         // inaccurate
                         // std::cout << "    inac" << std::endl;
-                        edges_ret[i] = 0;
+                        edges_ret[i] *= -1;
 		    }
 	        }
 	        if (pos_fullstep[i][1] == pos_fullstep[i][1] &&
@@ -415,10 +415,10 @@ void  trapezoid(torch::jit::script::Module module,
                     // cut next step y
                     // std::cout << "    y left" << std::endl;
 		    edges_ret[i] *= 5;
-		    if (pos_fullstep[i][1] <= y_left) {
+		    if (pos_fullstep[i][1] <= y_left && edges_ret[i] > 0) {
                         // inaccurate
                         // std::cout << "    inac" << std::endl;
-                        edges_ret[i] = 0;
+                        edges_ret[i] *= -1;
 		    }
 		}
 	        if (pos_fullstep[i][1] == pos_fullstep[i][1] &&
@@ -426,10 +426,10 @@ void  trapezoid(torch::jit::script::Module module,
                     // cut next step y
                     // std::cout << "    y right" << std::endl;
 		    edges_ret[i] *= 7;
-		    if (pos_fullstep[i][1] >= y_right) {
+		    if (pos_fullstep[i][1] >= y_right && edges_ret[i] > 0) {
                         // inaccurate
                         // std::cout << "    inac" << std::endl;
-                        edges_ret[i] = 0;
+                        edges_ret[i] *= -1;
 		    }
 	        }
 	        if (pos_fullstep[i][2] == pos_fullstep[i][2] &&
@@ -437,10 +437,10 @@ void  trapezoid(torch::jit::script::Module module,
                     // cut next step z
                     // std::cout << "    z left" << std::endl;
 		    edges_ret[i] *= 11;
-		    if (pos_fullstep[i][2] <= z_left) {
+		    if (pos_fullstep[i][2] <= z_left && edges_ret[i] > 0) {
                         // inaccurate
                         // std::cout << "    inac" << std::endl;
-                        edges_ret[i] = 0;
+                        edges_ret[i] *= -1;
 		    }
 		}
 	        if (pos_fullstep[i][2] == pos_fullstep[i][2] &&
@@ -448,10 +448,10 @@ void  trapezoid(torch::jit::script::Module module,
                     // cut next step z
                     // std::cout << "    z right" << std::endl;
 		    edges_ret[i] *= 13;
-		    if (pos_fullstep[i][2] >= z_right) {
+		    if (pos_fullstep[i][2] >= z_right && edges_ret[i] > 0) {
                         // inaccurate
                         // std::cout << "    inac" << std::endl;
-                        edges_ret[i] = 0;
+                        edges_ret[i] *= -1;
 		    }
 	        }
 		// std::cout << "edges ret [" << i << "]: " << edges_ret[i] << std::endl;
@@ -478,428 +478,438 @@ void  trapezoid(torch::jit::script::Module module,
 	// which axis (xyz) to use ?
 	// calc xyz max min, calc xyz average
 	// if enough atoms have xyz < xyz ave - delta_t * 3 * r and xyz > xyz ave + delta_t * 3 * r, do xyz cut
-	if (t0 == 0 && t1 == 5 && nat1 == 764) {
-            std::cout << "checking if space cut possible" << std::endl;
-	    std::vector<float> xs;
-	    for (int i = 0; i < nat1; i++) {
-                if (atoms1[i * 3 + 0] != atoms1[i * 3 + 0]) {
-                    // nan
-		} else {
-                    xs.push_back(atoms1[i * 3 + 0]);
-		}
+	// if (t0 == 0 && t1 == 5 && nat1 == 764) {
+        std::cout << "checking if space cut possible" << std::endl;
+	std::vector<float> xs;
+	for (int i = 0; i < nat1; i++) {
+            if (atoms1[i * 3 + 0] != atoms1[i * 3 + 0]) {
+                // nan
+	    } else {
+                xs.push_back(atoms1[i * 3 + 0]);
 	    }
-            nth_element(xs.begin(), xs.begin() + nat1 / 2, xs.end());
-	    float med_x = (float) xs[nat1 / 2];
-	    std::cout << "x med: " << med_x << std::endl;
-	    int nat_below_x_ave_top = 0;
-	    int nat_above_x_ave_top = 0;
-	    int nat_below_x = 0;
-	    int nat_above_x = 0;
-	    float* atoms_below_x = new float[nat1 * 3];
-	    float* atoms_above_x = new float[nat1 * 3];
-	    int* atom_types_below_x = new int[nat1];
-	    int* atom_types_above_x = new int[nat1];
-	    for (int i = 0; i < nat1; i++) {
-                if (atoms1[i * 3 + 0] <= med_x) {
-	    	    atoms_below_x[nat_below_x * 3 + 0] = atoms1[i * 3 + 0];
-	    	    atoms_below_x[nat_below_x * 3 + 1] = atoms1[i * 3 + 1];
-	    	    atoms_below_x[nat_below_x * 3 + 2] = atoms1[i * 3 + 2];
-	    	    atom_types_below_x[nat_below_x] = atom_types1[i];
-                    nat_below_x++;
-		    if (atoms1[i * 3 + 0] < med_x - delta_t * 3 * 3.0) {
-                        nat_below_x_ave_top++;
-		    }
-	        } else {
-	    	    atoms_above_x[nat_above_x * 3 + 0] = atoms1[i * 3 + 0];
-	    	    atoms_above_x[nat_above_x * 3 + 1] = atoms1[i * 3 + 1];
-	    	    atoms_above_x[nat_above_x * 3 + 2] = atoms1[i * 3 + 2];
-	    	    atom_types_above_x[nat_above_x] = atom_types1[i];
-                    nat_above_x++;
-                    if (atoms1[i * 3 + 0] > med_x + delta_t * 3 * 3.0) {
-                        nat_above_x_ave_top++;
-		    }
+	}
+        nth_element(xs.begin(), xs.begin() + nat1 / 2, xs.end());
+	float med_x = (float) xs[nat1 / 2];
+	std::cout << "x med: " << med_x << std::endl;
+	int nat_below_x_ave_top = 0;
+	int nat_above_x_ave_top = 0;
+	int nat_below_x = 0;
+	int nat_above_x = 0;
+	float* atoms_below_x = new float[nat1 * 3];
+	float* atoms_above_x = new float[nat1 * 3];
+	int* atom_types_below_x = new int[nat1];
+	int* atom_types_above_x = new int[nat1];
+	for (int i = 0; i < nat1; i++) {
+            if (atoms1[i * 3 + 0] <= med_x) {
+		    atoms_below_x[nat_below_x * 3 + 0] = atoms1[i * 3 + 0];
+		    atoms_below_x[nat_below_x * 3 + 1] = atoms1[i * 3 + 1];
+		    atoms_below_x[nat_below_x * 3 + 2] = atoms1[i * 3 + 2];
+		    atom_types_below_x[nat_below_x] = atom_types1[i];
+                nat_below_x++;
+	        if (atoms1[i * 3 + 0] < med_x - delta_t * 3 * 3.0) {
+                    nat_below_x_ave_top++;
+	        }
+	    } else {
+		    atoms_above_x[nat_above_x * 3 + 0] = atoms1[i * 3 + 0];
+		    atoms_above_x[nat_above_x * 3 + 1] = atoms1[i * 3 + 1];
+		    atoms_above_x[nat_above_x * 3 + 2] = atoms1[i * 3 + 2];
+		    atom_types_above_x[nat_above_x] = atom_types1[i];
+                nat_above_x++;
+                if (atoms1[i * 3 + 0] > med_x + delta_t * 3 * 3.0) {
+                    nat_above_x_ave_top++;
 	        }
 	    }
-	    std::cout << "nat below x ave top: " << nat_below_x_ave_top << std::endl;
-	    std::cout << "nat above x ave top: " << nat_above_x_ave_top << std::endl;
-	    if (nat_below_x_ave_top >= 4 /*arbitrary, should change*/ && nat_above_x_ave_top >= 4) {
-                // wide enough in x dim
-	        std::cout << "recursing left trap, nat below: " << nat_below_x << std::endl;
-	        float* atoms_left_final = new float[nat_below_x * 3];
-	        int* atom_types_left_final = new int[nat_below_x];
-	        int* atom_times_left_final = new int[nat_below_x];
-	        int* atom_edges_left_final = new int[nat_below_x];
-	        float* atom_edges_left_final_pre_pos = new float[nat_below_x * 3];
-	        trapezoid(module,
-	                  t0,
-	                  t1,
-	                  nat_below_x,
-	                  atoms_below_x,
-	                  atom_types_below_x,
-	                  atoms_left_final,
-	                  atom_types_left_final,
-	                  atom_times_left_final,
-	                  atom_edges_left_final,
-	                  atom_edges_left_final_pre_pos,
-	                  /*x_left,
-	                  x_right,
-	                  y_left,
-	                  y_right,
-	                  z_left,
-	                  z_right,*/
-	                  x_left_cut,
-	                  true,
-	                  y_left_cut,
-	                  y_right_cut,
-	                  z_left_cut,
-	                  z_right_cut);
-	        std::cout << "done left trap" << std::endl;
-                // std::cout << "poses of left trap, t0: " << t0 << ", t1: " << t1 << std::endl;
-                // for (int i = 0; i < nat_below_x; i++) {
-                //     std::cout << i << ": " << atoms_left_final[i * 3 + 0] << ", " << atoms_left_final[i * 3 + 1] << ", " << atoms_left_final[i * 3 + 2] << std::endl;
-	        // }
-	        std::cout << "recursing right trap, nat above: " << nat_above_x << std::endl;
-	        float* atoms_right_final = new float[nat_above_x * 3];
-	        int* atom_types_right_final = new int[nat_above_x];
-	        int* atom_times_right_final = new int[nat_above_x];
-	        int* atom_edges_right_final = new int[nat_above_x];
-	        float* atom_edges_right_final_pre_pos = new float[nat_above_x * 3];
-	        trapezoid(module,
-	                  t0,
-	                  t1,
-	                  nat_above_x,
-	                  atoms_above_x,
-	                  atom_types_above_x,
-	                  atoms_right_final,
-	                  atom_types_right_final,
-	                  atom_times_right_final,
-	                  atom_edges_right_final,
-	                  atom_edges_right_final_pre_pos,
-	                  /*x_left,
-	                  x_right,
-	                  y_left,
-	                  y_right,
-	                  z_left,
-	                  z_right,*/
-	                  true,
-	                  x_right_cut,
-	                  y_left_cut,
-	                  y_right_cut,
-	                  z_left_cut,
-	                  z_right_cut);
-	        std::cout << "done right trap" << std::endl;
-                // std::cout << "poses of left trap, t0: " << t0 << ", t1: " << t1 << std::endl;
-                // for (int i = 0; i < nattbelow_x; i++) {
-                //     std::cout << i << ": " << atoms_left_final[i * 3 + 0] << ", " << atoms_left_final[i * 3 + 1] << ", " << atoms_left_final[i * 3 + 2] << std::endl;
-	        // }
-		// TODO: combine and update return arrs
-		// i think i should add arr saying which edge (or neither) each atom is on
-		// i think this also needs the info to distinguish if atom is on x or y or z edge
-		// this is to distinguish edges i need to combine in the center from true outer edges
-		// first layer: indices correspond exactly, can go from output atoms to input atoms directly
-		// find corresponding input for both inac and edge atoms, update inac atoms
-		// gah i think i need both edge atoms and the input atoms that led to those edge atoms
-		int nat_this_step = 0;
-		int inac_atoms = 0;
-	        float* atoms_merged_input = new float[nat1 * 3];
-	        int* atom_types_merged_input = new int[nat1];
-	        float* atoms_merged = new float[nat1 * 3];
-	        int* atom_types_merged = new int[nat1];
-	        int* atom_times_merged = new int[nat1];
-	        int* atom_edges_merged = new int[nat1];
-	        float* atom_edges_pre_pos_merged = new float[nat1 * 3];
-		int nat_merged = 0;
-		float max_y = atoms_right_final[1];
-		float min_y = max_y;
-		float max_z = atoms_right_final[2];
-		float min_z = max_z;
-		for (int i = t0 + 1; i < t1 + 1; i++) {
-	            float* atom_edges_output_merged = new float[nat1 * 3];
-		    int edges_to_fix = 0;
-		    int num_atoms_before_this_step = inac_atoms + nat_this_step;
+	}
+	std::cout << "nat below x ave top: " << nat_below_x_ave_top << std::endl;
+	std::cout << "nat above x ave top: " << nat_above_x_ave_top << std::endl;
+	if (nat_below_x_ave_top >= 15 /*arbitrary, should change*/ && nat_above_x_ave_top >= 15) {
+            // wide enough in x dim
+            std::cout << "DOING SPACE CUT-------------------------------------------------------" << std::endl;
+	    std::cout << "recursing left trap, nat below: " << nat_below_x << std::endl;
+	    float* atoms_left_final = new float[nat_below_x * 3];
+	    int* atom_types_left_final = new int[nat_below_x];
+	    int* atom_times_left_final = new int[nat_below_x];
+	    int* atom_edges_left_final = new int[nat_below_x];
+	    float* atom_edges_left_final_pre_pos = new float[nat_below_x * 3];
+	    trapezoid(module,
+	              t0,
+	              t1,
+	              nat_below_x,
+	              atoms_below_x,
+	              atom_types_below_x,
+	              atoms_left_final,
+	              atom_types_left_final,
+	              atom_times_left_final,
+	              atom_edges_left_final,
+	              atom_edges_left_final_pre_pos,
+	              /*x_left,
+	              x_right,
+	              y_left,
+	              y_right,
+	              z_left,
+	              z_right,*/
+	              x_left_cut,
+	              true,
+	              y_left_cut,
+	              y_right_cut,
+	              z_left_cut,
+	              z_right_cut);
+	    std::cout << "done left trap" << std::endl;
+            // std::cout << "poses of left trap, t0: " << t0 << ", t1: " << t1 << std::endl;
+            // for (int i = 0; i < nat_below_x; i++) {
+            //     std::cout << i << ": " << atoms_left_final[i * 3 + 0] << ", " << atoms_left_final[i * 3 + 1] << ", " << atoms_left_final[i * 3 + 2] << std::endl;
+	    // }
+	    std::cout << "recursing right trap, nat above: " << nat_above_x << std::endl;
+	    float* atoms_right_final = new float[nat_above_x * 3];
+	    int* atom_types_right_final = new int[nat_above_x];
+	    int* atom_times_right_final = new int[nat_above_x];
+	    int* atom_edges_right_final = new int[nat_above_x];
+	    float* atom_edges_right_final_pre_pos = new float[nat_above_x * 3];
+	    trapezoid(module,
+	              t0,
+	              t1,
+	              nat_above_x,
+	              atoms_above_x,
+	              atom_types_above_x,
+	              atoms_right_final,
+	              atom_types_right_final,
+	              atom_times_right_final,
+	              atom_edges_right_final,
+	              atom_edges_right_final_pre_pos,
+	              /*x_left,
+	              x_right,
+	              y_left,
+	              y_right,
+	              z_left,
+	              z_right,*/
+	              true,
+	              x_right_cut,
+	              y_left_cut,
+	              y_right_cut,
+	              z_left_cut,
+	              z_right_cut);
+	    std::cout << "done right trap" << std::endl;
+            // std::cout << "poses of left trap, t0: " << t0 << ", t1: " << t1 << std::endl;
+            // for (int i = 0; i < nattbelow_x; i++) {
+            //     std::cout << i << ": " << atoms_left_final[i * 3 + 0] << ", " << atoms_left_final[i * 3 + 1] << ", " << atoms_left_final[i * 3 + 2] << std::endl;
+	    // }
+	    // TODO: combine and update return arrs
+	    // i think i should add arr saying which edge (or neither) each atom is on
+	    // i think this also needs the info to distinguish if atom is on x or y or z edge
+	    // this is to distinguish edges i need to combine in the center from true outer edges
+	    // first layer: indices correspond exactly, can go from output atoms to input atoms directly
+	    // find corresponding input for both inac and edge atoms, update inac atoms
+	    // gah i think i need both edge atoms and the input atoms that led to those edge atoms
+	    int nat_this_step = 0;
+	    int inac_atoms = 0;
+	    float* atoms_merged_input = new float[nat1 * 3];
+	    int* atom_types_merged_input = new int[nat1];
+	    float* atoms_merged = new float[nat1 * 3];
+	    int* atom_types_merged = new int[nat1];
+	    int* atom_times_merged = new int[nat1];
+	    int* atom_edges_merged = new int[nat1];
+	    float* atom_edges_pre_pos_merged = new float[nat1 * 3];
+	    int nat_merged = 0;
+	    float max_y = atoms_right_final[1];
+	    float min_y = max_y;
+	    float max_z = atoms_right_final[2];
+	    float min_z = max_z;
+	    for (int i = t0 + 1; i < t1 + 1; i++) {
+	        float* atom_edges_output_merged = new float[nat1 * 3];
+	        int edges_to_fix = 0;
+	        int num_atoms_before_this_step = inac_atoms + nat_this_step;
+                for (int j = 0; j < nat_above_x; j++) {
+                    if (atom_times_right_final[j] == i && atom_edges_right_final[j] % 2 == 0 && (i != t0 + 1 || atom_edges_right_final[j] < 0)) {
+                        atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 0] = atom_edges_right_final_pre_pos[j * 3 + 0];
+                        atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 1] = atom_edges_right_final_pre_pos[j * 3 + 1];
+                        atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 2] = atom_edges_right_final_pre_pos[j * 3 + 2];
+	    	    atom_types_merged_input[inac_atoms + nat_this_step] = atom_types_right_final[j];
+                        if (atom_edges_right_final[j] < 0) {
+                            // std::cout << i << ": found inaccurate atom" << std::endl;
+	    		inac_atoms++;
+	    	    } else {
+                            // std::cout << i << ": found atom on edge" << std::endl;
+                            atom_edges_output_merged[edges_to_fix * 3 + 0] = atoms_right_final[j * 3 + 0];
+                            atom_edges_output_merged[edges_to_fix * 3 + 1] = atoms_right_final[j * 3 + 1];
+                            atom_edges_output_merged[edges_to_fix * 3 + 2] = atoms_right_final[j * 3 + 2];
+                            // std::cout << i << ": " << atom_edges_output_merged[edges_to_fix * 3 + 0] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 1] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 2] << std::endl;
+	    	        nat_this_step++;
+	    		edges_to_fix++;
+	    	    }
+	    	}
+	    	if ((atom_times_right_final[j] == i && atom_edges_right_final[j] % 2 != 0) ||
+	    	    (i == t1 && atom_times_right_final[j] == t1 && atom_edges_right_final[j] > 0)) {
+                        // this time step, not on middle edge (including inac ones on mid edge), safe to return
+	    	    // or last timestep and not inaccurate, safe to return
+	    	    // allows inac atoms as long as they're not on middle edge
+                        max_y = std::max(max_y, atoms_right_final[j * 3 + 1]);
+                        min_y = std::min(min_y, atoms_right_final[j * 3 + 1]);
+                        max_z = std::max(max_z, atoms_right_final[j * 3 + 2]);
+                        min_z = std::min(min_z, atoms_right_final[j * 3 + 2]);
+                        atoms_ret[nat_merged * 3 + 0] = atoms_right_final[j * 3 + 0];
+                        atoms_ret[nat_merged * 3 + 1] = atoms_right_final[j * 3 + 1];
+                        atoms_ret[nat_merged * 3 + 2] = atoms_right_final[j * 3 + 2];
+                        edges_ret_pre_pos[nat_merged * 3 + 0] = atom_edges_right_final_pre_pos[j * 3 + 0];
+                        edges_ret_pre_pos[nat_merged * 3 + 1] = atom_edges_right_final_pre_pos[j * 3 + 1];
+                        edges_ret_pre_pos[nat_merged * 3 + 2] = atom_edges_right_final_pre_pos[j * 3 + 2];
+	                atom_types_ret[nat_merged] = atom_types_right_final[j];
+	                timestep_ret[nat_merged] = atom_times_right_final[j];
+	    	    if (i == t1 && atom_edges_right_final[j] % 2 == 0) {
+	                    edges_ret[nat_merged] = atom_edges_right_final[j] / 2;
+	    	    } else {
+	                    edges_ret[nat_merged] = atom_edges_right_final[j];
+	    	    }
+	                nat_merged++;
+	    	}
+	        }
+	        std::cout << "after including right trap, nat total: " << nat_merged << std::endl;
+                for (int j = 0; j < nat_below_x; j++) {
+                    if (atom_times_left_final[j] == i && atom_edges_left_final[j] % 3 == 0 && (i != t0 + 1 || atom_edges_left_final[j] < 0)) {
+                        atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 0] = atom_edges_left_final_pre_pos[j * 3 + 0];
+                        atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 1] = atom_edges_left_final_pre_pos[j * 3 + 1];
+                        atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 2] = atom_edges_left_final_pre_pos[j * 3 + 2];
+	    	    atom_types_merged_input[inac_atoms + nat_this_step] = atom_types_left_final[j];
+                        if (atom_edges_left_final[j] < 0) {
+                            // std::cout << i << ": found inaccurate atom" << std::endl;
+	    		inac_atoms++;
+	    	    } else {
+                            // std::cout << i << ": found atom on edge" << std::endl;
+                            atom_edges_output_merged[edges_to_fix * 3 + 0] = atoms_left_final[j * 3 + 0];
+                            atom_edges_output_merged[edges_to_fix * 3 + 1] = atoms_left_final[j * 3 + 1];
+                            atom_edges_output_merged[edges_to_fix * 3 + 2] = atoms_left_final[j * 3 + 2];
+                            // std::cout << i << ": " << atom_edges_output_merged[edges_to_fix * 3 + 0] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 1] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 2] << std::endl;
+	    	        nat_this_step++;
+	    		edges_to_fix++;
+	    	    }
+	    	}
+	    	if ((atom_times_left_final[j] == i && atom_edges_left_final[j] % 3 != 0) || 
+	    	    (i == t1 && atom_times_left_final[j] == t1 && atom_edges_left_final[j] > 0)) {
+                        // this time step, not inaccurate, not on middle edge, safe to return
+	    	    // or last timestep and not inaccurate, safe to return
+	    	    // wait idk if this is right, in l/r taps i think it's okay to return inac data as long as it's on outer edges?
+	    	    // might need to add more classes of edges (neg?) to account for these cases
+                        max_y = std::max(max_y, atoms_left_final[j * 3 + 1]);
+                        min_y = std::min(min_y, atoms_left_final[j * 3 + 1]);
+                        max_z = std::max(max_z, atoms_left_final[j * 3 + 2]);
+                        min_z = std::min(min_z, atoms_left_final[j * 3 + 2]);
+                        atoms_ret[nat_merged * 3 + 0] = atoms_left_final[j * 3 + 0];
+                        atoms_ret[nat_merged * 3 + 1] = atoms_left_final[j * 3 + 1];
+                        atoms_ret[nat_merged * 3 + 2] = atoms_left_final[j * 3 + 2];
+                        edges_ret_pre_pos[nat_merged * 3 + 0] = atom_edges_left_final_pre_pos[j * 3 + 0];
+                        edges_ret_pre_pos[nat_merged * 3 + 1] = atom_edges_left_final_pre_pos[j * 3 + 1];
+                        edges_ret_pre_pos[nat_merged * 3 + 2] = atom_edges_left_final_pre_pos[j * 3 + 2];
+	                atom_types_ret[nat_merged] = atom_types_left_final[j];
+	                timestep_ret[nat_merged] = atom_times_left_final[j];
+	    	    if (i == t1 && atom_edges_right_final[j] % 3 == 0) {
+	                    edges_ret[nat_merged] = atom_edges_left_final[j] / 3;
+	    	    } else {
+	                    edges_ret[nat_merged] = atom_edges_left_final[j];
+	    	    }
+	                nat_merged++;
+	    	}
+	        }
+	        if (i == t0 + 1) {
                     for (int j = 0; j < nat_above_x; j++) {
-                        if (atom_times_right_final[j] == i && atom_edges_right_final[j] % 2 == 0 && (i != t0 + 1 || atom_edges_right_final[j] == 0)) {
+                        if (atom_times_right_final[j] == i && atom_edges_right_final[j] % 2 == 0 && atom_edges_right_final[j] > 0) {
                             atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 0] = atom_edges_right_final_pre_pos[j * 3 + 0];
                             atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 1] = atom_edges_right_final_pre_pos[j * 3 + 1];
                             atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 2] = atom_edges_right_final_pre_pos[j * 3 + 2];
-			    atom_types_merged_input[inac_atoms + nat_this_step] = atom_types_right_final[j];
-                            if (atom_edges_right_final[j] == 0) {
-                                // std::cout << i << ": found inaccurate atom" << std::endl;
-				inac_atoms++;
-			    } else {
-                                // std::cout << i << ": found atom on edge" << std::endl;
-                                atom_edges_output_merged[edges_to_fix * 3 + 0] = atoms_right_final[j * 3 + 0];
-                                atom_edges_output_merged[edges_to_fix * 3 + 1] = atoms_right_final[j * 3 + 1];
-                                atom_edges_output_merged[edges_to_fix * 3 + 2] = atoms_right_final[j * 3 + 2];
-                                // std::cout << i << ": " << atom_edges_output_merged[edges_to_fix * 3 + 0] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 1] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 2] << std::endl;
-			        nat_this_step++;
-				edges_to_fix++;
-			    }
-			}
-			if ((atom_times_right_final[j] == i && atom_edges_right_final[j] != 0 && atom_edges_right_final[j] % 2 != 0) ||
-			    (i == t1 && atom_times_right_final[j] == t1 && atom_edges_right_final[j] != 0)) {
-                            // this time step, not inaccurate, not on middle edge, safe to return
-			    // or last timestep and not inaccurate, safe to return
-                            max_y = std::max(max_y, atoms_right_final[j * 3 + 1]);
-                            min_y = std::min(min_y, atoms_right_final[j * 3 + 1]);
-                            max_z = std::max(max_z, atoms_right_final[j * 3 + 2]);
-                            min_z = std::min(min_z, atoms_right_final[j * 3 + 2]);
-                            atoms_ret[nat_merged * 3 + 0] = atoms_right_final[j * 3 + 0];
-                            atoms_ret[nat_merged * 3 + 1] = atoms_right_final[j * 3 + 1];
-                            atoms_ret[nat_merged * 3 + 2] = atoms_right_final[j * 3 + 2];
-                            edges_ret_pre_pos[nat_merged * 3 + 0] = atom_edges_right_final_pre_pos[j * 3 + 0];
-                            edges_ret_pre_pos[nat_merged * 3 + 1] = atom_edges_right_final_pre_pos[j * 3 + 1];
-                            edges_ret_pre_pos[nat_merged * 3 + 2] = atom_edges_right_final_pre_pos[j * 3 + 2];
-	                    atom_types_ret[nat_merged] = atom_types_right_final[j];
-	                    timestep_ret[nat_merged] = atom_times_right_final[j];
-			    if (i == t1 && atom_edges_right_final[j] % 2 == 0) {
-	                        edges_ret[nat_merged] = atom_edges_right_final[j] / 2;
-			    } else {
-	                        edges_ret[nat_merged] = atom_edges_right_final[j];
-			    }
-	                    nat_merged++;
-			}
-		    }
-		    std::cout << "after including right trap, nat total: " << nat_merged << std::endl;
+	    	        atom_types_merged_input[inac_atoms + nat_this_step] = atom_types_right_final[j];
+                            // std::cout << i << ": found atom on edge" << std::endl;
+                            atom_edges_output_merged[edges_to_fix * 3 + 0] = atoms_right_final[j * 3 + 0];
+                            atom_edges_output_merged[edges_to_fix * 3 + 1] = atoms_right_final[j * 3 + 1];
+                            atom_edges_output_merged[edges_to_fix * 3 + 2] = atoms_right_final[j * 3 + 2];
+                            // std::cout << i << ": " << atom_edges_output_merged[edges_to_fix * 3 + 0] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 1] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 2] << std::endl;
+	    	        nat_this_step++;
+	    	        edges_to_fix++;
+	    	    }
+	    	}
                     for (int j = 0; j < nat_below_x; j++) {
-                        if (atom_times_left_final[j] == i && atom_edges_left_final[j] % 3 == 0 && (i != t0 + 1 || atom_edges_left_final[j] == 0)) {
+                        if (atom_times_left_final[j] == i && atom_edges_left_final[j] % 3 == 0 && atom_edges_left_final[j] > 0) {
                             atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 0] = atom_edges_left_final_pre_pos[j * 3 + 0];
                             atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 1] = atom_edges_left_final_pre_pos[j * 3 + 1];
                             atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 2] = atom_edges_left_final_pre_pos[j * 3 + 2];
-			    atom_types_merged_input[inac_atoms + nat_this_step] = atom_types_left_final[j];
-                            if (atom_edges_left_final[j] == 0) {
-                                // std::cout << i << ": found inaccurate atom" << std::endl;
-				inac_atoms++;
-			    } else {
-                                // std::cout << i << ": found atom on edge" << std::endl;
-                                atom_edges_output_merged[edges_to_fix * 3 + 0] = atoms_left_final[j * 3 + 0];
-                                atom_edges_output_merged[edges_to_fix * 3 + 1] = atoms_left_final[j * 3 + 1];
-                                atom_edges_output_merged[edges_to_fix * 3 + 2] = atoms_left_final[j * 3 + 2];
-                                // std::cout << i << ": " << atom_edges_output_merged[edges_to_fix * 3 + 0] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 1] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 2] << std::endl;
-			        nat_this_step++;
-				edges_to_fix++;
-			    }
-			}
-			if ((atom_times_left_final[j] == i && atom_edges_left_final[j] != 0 && atom_edges_left_final[j] % 3 != 0) || 
-			    (i == t1 && atom_times_left_final[j] == t1 && atom_edges_left_final[j] != 0)) {
-                            // this time step, not inaccurate, not on middle edge, safe to return
-			    // or last timestep and not inaccurate, safe to return
-			    // wait idk if this is right, in l/r taps i think it's okay to return inac data as long as it's on outer edges?
-			    // might need to add more classes of edges (neg?) to account for these cases
-                            max_y = std::max(max_y, atoms_left_final[j * 3 + 1]);
-                            min_y = std::min(min_y, atoms_left_final[j * 3 + 1]);
-                            max_z = std::max(max_z, atoms_left_final[j * 3 + 2]);
-                            min_z = std::min(min_z, atoms_left_final[j * 3 + 2]);
-                            atoms_ret[nat_merged * 3 + 0] = atoms_left_final[j * 3 + 0];
-                            atoms_ret[nat_merged * 3 + 1] = atoms_left_final[j * 3 + 1];
-                            atoms_ret[nat_merged * 3 + 2] = atoms_left_final[j * 3 + 2];
-                            edges_ret_pre_pos[nat_merged * 3 + 0] = atom_edges_left_final_pre_pos[j * 3 + 0];
-                            edges_ret_pre_pos[nat_merged * 3 + 1] = atom_edges_left_final_pre_pos[j * 3 + 1];
-                            edges_ret_pre_pos[nat_merged * 3 + 2] = atom_edges_left_final_pre_pos[j * 3 + 2];
-	                    atom_types_ret[nat_merged] = atom_types_left_final[j];
-	                    timestep_ret[nat_merged] = atom_times_left_final[j];
-			    if (i == t1 && atom_edges_right_final[j] % 3 == 0) {
-	                        edges_ret[nat_merged] = atom_edges_left_final[j] / 3;
-			    } else {
-	                        edges_ret[nat_merged] = atom_edges_left_final[j];
-			    }
+	    	        atom_types_merged_input[inac_atoms + nat_this_step] = atom_types_left_final[j];
+                            // std::cout << i << ": found atom on edge" << std::endl;
+                            atom_edges_output_merged[edges_to_fix * 3 + 0] = atoms_left_final[j * 3 + 0];
+                            atom_edges_output_merged[edges_to_fix * 3 + 1] = atoms_left_final[j * 3 + 1];
+                            atom_edges_output_merged[edges_to_fix * 3 + 2] = atoms_left_final[j * 3 + 2];
+                            // std::cout << i << ": " << atom_edges_output_merged[edges_to_fix * 3 + 0] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 1] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 2] << std::endl;
+	    	        nat_this_step++;
+	    	        edges_to_fix++;
+	    	    }
+	    	}
+	        }
+	        std::cout << "nat this step: " << nat_this_step << std::endl;
+	        std::cout << "inac atoms: " << inac_atoms << std::endl;
+	        std::cout << "after including left trap, nat total: " << nat_merged << std::endl;
+	        trapezoid(module,
+	                  i - 1,
+	                  i,
+	                  inac_atoms + nat_this_step,
+	                  atoms_merged_input,
+	                  atom_types_merged_input,
+	                  atoms_merged,
+	                  atom_types_merged,
+	                  atom_times_merged,
+	                  atom_edges_merged,
+	                  atom_edges_pre_pos_merged,
+	                  true,
+	                  true,
+	                  y_left_cut,
+	                  y_right_cut,
+	                  z_left_cut,
+	                  z_right_cut);
+                for (int j = 0; j < inac_atoms + nat_this_step; j++) {
+	    	// if it's an edge instead of an inac one, we need to replace its value w the correct edge here
+	    	// cant replace it w atoms_merged data since it's on the edge so it'll be wrong here
+	    	if ((i != t0 + 1 && j >= num_atoms_before_this_step) || (i == t0 + 1 && j >= inac_atoms)) {
+                        // added this step, means it's on edge so it's wrong, replace w correct data
+                        // inac for merged data, means it is on edge
+	    	    // WRONG: this means it's on edge for merged data, might not necessarily correspond to edge for l/r data
+	    	    // sidestepping by just assuming it's right anyways:// can still analyze overall runtime, accuracy just isn't there
+                        // atoms_merged_input[j * 3 + 0] = atom_edges_output_merged[j * 3 + 0];
+                        // atoms_merged_input[j * 3 + 1] = atom_edges_output_merged[j * 3 + 1];
+                        // atoms_merged_input[j * 3 + 2] = atom_edges_output_merged[j * 3 + 2];
+	    	    int to_subtract = 0;
+	    	    if (i != t0 + 1) {
+                            to_subtract = num_atoms_before_this_step;
+	    	    } else {
+                            to_subtract = inac_atoms;
+	    	    }
+                        max_y = std::max(max_y, atom_edges_output_merged[(j - to_subtract) * 3 + 1]);
+                        min_y = std::min(min_y, atom_edges_output_merged[(j - to_subtract) * 3 + 1]);
+                        max_z = std::max(max_z, atom_edges_output_merged[(j - to_subtract) * 3 + 2]);
+                        min_z = std::min(min_z, atom_edges_output_merged[(j - to_subtract) * 3 + 2]);
+                        atoms_merged_input[j * 3 + 0] = atom_edges_output_merged[(j - to_subtract) * 3 + 0];
+                        atoms_merged_input[j * 3 + 1] = atom_edges_output_merged[(j - to_subtract) * 3 + 1];
+                        atoms_merged_input[j * 3 + 2] = atom_edges_output_merged[(j - to_subtract) * 3 + 2];
+	    	    // std::cout << "tryna replace edges w correct data" << std::endl;
+                        // std::cout << j << ": " << atoms_merged_input[j * 3 + 0] << ", " << atoms_merged_input[j * 3 + 1] << ", " << atoms_merged_input[j * 3 + 2] << std::endl;
+	    	} else {
+                        max_y = std::max(max_y, atoms_merged[j * 3 + 1]);
+                        min_y = std::min(min_y, atoms_merged[j * 3 + 1]);
+                        max_z = std::max(max_z, atoms_merged[j * 3 + 2]);
+                        min_z = std::min(min_z, atoms_merged[j * 3 + 2]);
+                        atoms_merged_input[j * 3 + 0] = atoms_merged[j * 3 + 0];
+                        atoms_merged_input[j * 3 + 1] = atoms_merged[j * 3 + 1];
+                        atoms_merged_input[j * 3 + 2] = atoms_merged[j * 3 + 2];
+	                if (i == t1) {
+                            // add top row to return values
+                            atoms_ret[nat_merged * 3 + 0] = atoms_merged[j * 3 + 0];
+                            atoms_ret[nat_merged * 3 + 1] = atoms_merged[j * 3 + 1];
+                            atoms_ret[nat_merged * 3 + 2] = atoms_merged[j * 3 + 2];
+                            edges_ret_pre_pos[nat_merged * 3 + 0] = atom_edges_pre_pos_merged[j * 3 + 0];
+                            edges_ret_pre_pos[nat_merged * 3 + 1] = atom_edges_pre_pos_merged[j * 3 + 1];
+                            edges_ret_pre_pos[nat_merged * 3 + 2] = atom_edges_pre_pos_merged[j * 3 + 2];
+	                    atom_types_ret[nat_merged] = atom_types_merged[j];
+	                    timestep_ret[nat_merged] = atom_times_merged[j];
+	                    edges_ret[nat_merged] = atom_edges_merged[j];
+	    		// merged atoms on top row should no longer be x edges
+	    		if (edges_ret[nat_merged] < 0) {
+                                // again wrong i think, want to allow incorrect atoms on other edges
+	    		    // altho i dont think there should be any of those?
+	    		    // so actually i think this is okay
+                                edges_ret[nat_merged] = 1;
+	    		}
+	    		if (edges_ret[nat_merged] % 2 == 0) {
+                                edges_ret[nat_merged] = edges_ret[nat_merged] / 2;
+	    		}
+	    		if (edges_ret[nat_merged] % 3 == 0) {
+                                edges_ret[nat_merged] = edges_ret[nat_merged] / 3;
+	    		}
+	    		if (edges_ret[nat_merged] == -1) {
+                                // if we fixed the last edge this atom was on, it's now correct ? CHECK THIS
+                                edges_ret[nat_merged] = 1;
+	    		}
 	                    nat_merged++;
-			}
-		    }
-		    if (i == t0 + 1) {
-                        for (int j = 0; j < nat_above_x; j++) {
-                            if (atom_times_right_final[j] == i && atom_edges_right_final[j] % 2 == 0 && atom_edges_right_final[j] != 0) {
-                                atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 0] = atom_edges_right_final_pre_pos[j * 3 + 0];
-                                atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 1] = atom_edges_right_final_pre_pos[j * 3 + 1];
-                                atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 2] = atom_edges_right_final_pre_pos[j * 3 + 2];
-			        atom_types_merged_input[inac_atoms + nat_this_step] = atom_types_right_final[j];
-                                // std::cout << i << ": found atom on edge" << std::endl;
-                                atom_edges_output_merged[edges_to_fix * 3 + 0] = atoms_right_final[j * 3 + 0];
-                                atom_edges_output_merged[edges_to_fix * 3 + 1] = atoms_right_final[j * 3 + 1];
-                                atom_edges_output_merged[edges_to_fix * 3 + 2] = atoms_right_final[j * 3 + 2];
-                                // std::cout << i << ": " << atom_edges_output_merged[edges_to_fix * 3 + 0] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 1] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 2] << std::endl;
-			        nat_this_step++;
-			        edges_to_fix++;
-			    }
-			}
-                        for (int j = 0; j < nat_below_x; j++) {
-                            if (atom_times_left_final[j] == i && atom_edges_left_final[j] % 3 == 0 && atom_edges_left_final[j] != 0) {
-                                atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 0] = atom_edges_left_final_pre_pos[j * 3 + 0];
-                                atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 1] = atom_edges_left_final_pre_pos[j * 3 + 1];
-                                atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 2] = atom_edges_left_final_pre_pos[j * 3 + 2];
-			        atom_types_merged_input[inac_atoms + nat_this_step] = atom_types_left_final[j];
-                                // std::cout << i << ": found atom on edge" << std::endl;
-                                atom_edges_output_merged[edges_to_fix * 3 + 0] = atoms_left_final[j * 3 + 0];
-                                atom_edges_output_merged[edges_to_fix * 3 + 1] = atoms_left_final[j * 3 + 1];
-                                atom_edges_output_merged[edges_to_fix * 3 + 2] = atoms_left_final[j * 3 + 2];
-                                // std::cout << i << ": " << atom_edges_output_merged[edges_to_fix * 3 + 0] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 1] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 2] << std::endl;
-			        nat_this_step++;
-			        edges_to_fix++;
-			    }
-			}
-		    }
-		    std::cout << "nat this step: " << nat_this_step << std::endl;
-		    std::cout << "inac atoms: " << inac_atoms << std::endl;
-		    std::cout << "after including left trap, nat total: " << nat_merged << std::endl;
-	            trapezoid(module,
-	                      i - 1,
-	                      i,
-	                      inac_atoms + nat_this_step,
-	                      atoms_merged_input,
-	                      atom_types_merged_input,
-	                      atoms_merged,
-	                      atom_types_merged,
-	                      atom_times_merged,
-	                      atom_edges_merged,
-	                      atom_edges_pre_pos_merged,
-	                      true,
-	                      true,
-	                      y_left_cut,
-	                      y_right_cut,
-	                      z_left_cut,
-	                      z_right_cut);
-                    for (int j = 0; j < inac_atoms + nat_this_step; j++) {
-			// if it's an edge instead of an inac one, we need to replace its value w the correct edge here
-			// cant replace it w atoms_merged data since it's on the edge so it'll be wrong here
-			if ((i != t0 + 1 && j >= num_atoms_before_this_step) || (i == t0 + 1 && j >= inac_atoms)) {
-                            // added this step, means it's on edge so it's wrong, replace w correct data
-                            // inac for merged data, means it is on edge
-			    // WRONG: this means it's on edge for merged data, might not necessarily correspond to edge for l/r data
-			    // sidestepping by just assuming it's right anyways:// can still analyze overall runtime, accuracy just isn't there
-                            // atoms_merged_input[j * 3 + 0] = atom_edges_output_merged[j * 3 + 0];
-                            // atoms_merged_input[j * 3 + 1] = atom_edges_output_merged[j * 3 + 1];
-                            // atoms_merged_input[j * 3 + 2] = atom_edges_output_merged[j * 3 + 2];
-			    int to_subtract = 0;
-			    if (i != t0 + 1) {
-                                to_subtract = num_atoms_before_this_step;
-			    } else {
-                                to_subtract = inac_atoms;
-			    }
-                            max_y = std::max(max_y, atom_edges_output_merged[(j - to_subtract) * 3 + 1]);
-                            min_y = std::min(min_y, atom_edges_output_merged[(j - to_subtract) * 3 + 1]);
-                            max_z = std::max(max_z, atom_edges_output_merged[(j - to_subtract) * 3 + 2]);
-                            min_z = std::min(min_z, atom_edges_output_merged[(j - to_subtract) * 3 + 2]);
-                            atoms_merged_input[j * 3 + 0] = atom_edges_output_merged[(j - to_subtract) * 3 + 0];
-                            atoms_merged_input[j * 3 + 1] = atom_edges_output_merged[(j - to_subtract) * 3 + 1];
-                            atoms_merged_input[j * 3 + 2] = atom_edges_output_merged[(j - to_subtract) * 3 + 2];
-			    // std::cout << "tryna replace edges w correct data" << std::endl;
-                            // std::cout << j << ": " << atoms_merged_input[j * 3 + 0] << ", " << atoms_merged_input[j * 3 + 1] << ", " << atoms_merged_input[j * 3 + 2] << std::endl;
-			} else {
-                            max_y = std::max(max_y, atoms_merged[j * 3 + 1]);
-                            min_y = std::min(min_y, atoms_merged[j * 3 + 1]);
-                            max_z = std::max(max_z, atoms_merged[j * 3 + 2]);
-                            min_z = std::min(min_z, atoms_merged[j * 3 + 2]);
-                            atoms_merged_input[j * 3 + 0] = atoms_merged[j * 3 + 0];
-                            atoms_merged_input[j * 3 + 1] = atoms_merged[j * 3 + 1];
-                            atoms_merged_input[j * 3 + 2] = atoms_merged[j * 3 + 2];
-		            if (i == t1) {
-                                // add top row to return values
-                                atoms_ret[nat_merged * 3 + 0] = atoms_merged[j * 3 + 0];
-                                atoms_ret[nat_merged * 3 + 1] = atoms_merged[j * 3 + 1];
-                                atoms_ret[nat_merged * 3 + 2] = atoms_merged[j * 3 + 2];
-                                edges_ret_pre_pos[nat_merged * 3 + 0] = atom_edges_pre_pos_merged[j * 3 + 0];
-                                edges_ret_pre_pos[nat_merged * 3 + 1] = atom_edges_pre_pos_merged[j * 3 + 1];
-                                edges_ret_pre_pos[nat_merged * 3 + 2] = atom_edges_pre_pos_merged[j * 3 + 2];
-	                        atom_types_ret[nat_merged] = atom_types_merged[j];
-	                        timestep_ret[nat_merged] = atom_times_merged[j];
-	                        edges_ret[nat_merged] = atom_edges_merged[j];
-				// merged atoms on top row should no longer be x edges
-				if (edges_ret[nat_merged] == 0) {
-                                    // again wrong i think, want to allow incorrect atoms on other edges
-				    // altho i dont think there should be any of those?
-				    // so actually i think this is okay
-                                    edges_ret[nat_merged] = 1;
-				}
-				if (edges_ret[nat_merged] % 2 == 0) {
-                                    edges_ret[nat_merged] = edges_ret[nat_merged] / 2;
-				}
-				if (edges_ret[nat_merged] % 3 == 0) {
-                                    edges_ret[nat_merged] = edges_ret[nat_merged] / 3;
-				}
-	                        nat_merged++;
-		            }
-			}
-		    }
-	            if (y_left_cut) {
-                        min_y = min_y + 3 * 3.0;
-	            }
-	            if (y_right_cut) {
-                        max_y = max_y - 3 * 3.0;
-	            }
-	            if (z_left_cut) {
-                        min_z = min_z + 3 * 3.0;
-	            }
-	            if (z_right_cut) {
-                        max_z = max_z - 3 * 3.0;
-	            }
-		    std::cout << "this is where yz edges get updated, nat total: " << nat_merged << std::endl;
-		    if (y_left_cut || y_right_cut || z_left_cut || z_right_cut) {
-                        for (int j = 0; j < nat_merged; j++) {
-                            // clear prev yz edge data
-                            if (edges_ret[j] % 5 == 0) {
-                                edges_ret[j] = edges_ret[j] / 5;
-			    }
-                            if (edges_ret[j] % 7 == 0) {
-                                edges_ret[j] = edges_ret[j] / 7;
-			    }
-                            if (edges_ret[j] % 11 == 0) {
-                                edges_ret[j] = edges_ret[j] / 11;
-			    }
-                            if (edges_ret[j] % 13 == 0) {
-                                edges_ret[j] = edges_ret[j] / 13;
-			    }
-	                    if ((((atoms_ret[j * 3 + 1] > min_y || !y_left_cut) &&
-	                          (atoms_ret[j * 3 + 1] < max_y || !y_right_cut)) ||
-	                         atoms_ret[j * 3 + 1] != atoms_ret[j * 3 + 1]) &&
-	                        (((atoms_ret[j * 3 + 2] > min_z || !z_left_cut) &&
-	                          (atoms_ret[j * 3 + 2] < max_z || !z_right_cut)) ||
-	                         atoms_ret[j * 3 + 2] != atoms_ret[j * 3 + 2])) {
+	                }
+	    	}
+	        }
+	        if (y_left_cut) {
+                    min_y = min_y + 3 * 3.0;
+	        }
+	        if (y_right_cut) {
+                    max_y = max_y - 3 * 3.0;
+	        }
+	        if (z_left_cut) {
+                    min_z = min_z + 3 * 3.0;
+	        }
+	        if (z_right_cut) {
+                    max_z = max_z - 3 * 3.0;
+	        }
+	        std::cout << "this is where yz edges get updated, nat total: " << nat_merged << std::endl;
+	        if (y_left_cut || y_right_cut || z_left_cut || z_right_cut) {
+                    for (int j = 0; j < nat_merged; j++) {
+                        // clear prev yz edge data
+                        if (edges_ret[j] % 5 == 0) {
+                            edges_ret[j] = edges_ret[j] / 5;
+	    	    }
+                        if (edges_ret[j] % 7 == 0) {
+                            edges_ret[j] = edges_ret[j] / 7;
+	    	    }
+                        if (edges_ret[j] % 11 == 0) {
+                            edges_ret[j] = edges_ret[j] / 11;
+	    	    }
+                        if (edges_ret[j] % 13 == 0) {
+                            edges_ret[j] = edges_ret[j] / 13;
+	    	    }
+	                if ((((atoms_ret[j * 3 + 1] > min_y || !y_left_cut) &&
+	                      (atoms_ret[j * 3 + 1] < max_y || !y_right_cut)) ||
+	                     atoms_ret[j * 3 + 1] != atoms_ret[j * 3 + 1]) &&
+	                    (((atoms_ret[j * 3 + 2] > min_z || !z_left_cut) &&
+	                      (atoms_ret[j * 3 + 2] < max_z || !z_right_cut)) ||
+	                     atoms_ret[j * 3 + 2] != atoms_ret[j * 3 + 2])) {
 
-                                // would not have gotten cut next step
-	                        // not on the edge
+                            // would not have gotten cut next step
+	                    // not on the edge
 
-	                    } else {
-                                // woudl have gotten cut next step
-	                        // on edge
-	                        // std::cout << "adding something to edge, only possible w space cut" << std::endl;
-	                        // to_return[i][3] = static_cast<float>(t0);
-	                        // timestep_ret[i] = t0;
-                                // std::cout << i << ": on edge" << std::endl;
-	                        if (atoms_ret[j * 3 + 1] == atoms_ret[j * 3 + 1] &&
-                                    atoms_ret[j * 3 + 1] <= min_y && y_left_cut) {
-                                    // cut next step y
-                                    // std::cout << "    y left" << std::endl;
-	                            edges_ret[j] *= 5;
-	                        }
-	                        if (atoms_ret[j * 3 + 1] == atoms_ret[j * 3 + 1] &&
-                                    atoms_ret[j * 3 + 1] >= max_y && y_right_cut) {
-                                    // cut next step y
-                                    // std::cout << "    y right" << std::endl;
-	                            edges_ret[j] *= 7;
-	                        }
-	                        if (atoms_ret[j * 3 + 2] == atoms_ret[j * 3 + 2] &&
-                                    atoms_ret[j * 3 + 2] <= min_z && z_left_cut) {
-                                    // cut next step z
-                                    // std::cout << "    z left" << std::endl;
-	                            edges_ret[j] *= 11;
-	                        }
-	                        if (atoms_ret[j * 3 + 2] == atoms_ret[j * 3 + 2] &&
-                                    atoms_ret[j * 3 + 2] >= max_z && z_right_cut) {
-                                    // cut next step z
-                                    // std::cout << "    z right" << std::endl;
-	                            edges_ret[j] *= 13;
-	                        }
-	                        // std::cout << "edges ret [" << i << "]: " << edges_ret[i] << std::endl;
+	                } else {
+                            // woudl have gotten cut next step
+	                    // on edge
+	                    // std::cout << "adding something to edge, only possible w space cut" << std::endl;
+	                    // to_return[i][3] = static_cast<float>(t0);
+	                    // timestep_ret[i] = t0;
+                            // std::cout << i << ": on edge" << std::endl;
+	                    if (atoms_ret[j * 3 + 1] == atoms_ret[j * 3 + 1] &&
+                                atoms_ret[j * 3 + 1] <= min_y && y_left_cut) {
+                                // cut next step y
+                                // std::cout << "    y left" << std::endl;
+	                        edges_ret[j] *= 5;
 	                    }
-			}
-		    }
-		}
-		// update return values, dont double count edges
-		// add l/r trap data to output
-		// i think this is what i did above
-	        return;
+	                    if (atoms_ret[j * 3 + 1] == atoms_ret[j * 3 + 1] &&
+                                atoms_ret[j * 3 + 1] >= max_y && y_right_cut) {
+                                // cut next step y
+                                // std::cout << "    y right" << std::endl;
+	                        edges_ret[j] *= 7;
+	                    }
+	                    if (atoms_ret[j * 3 + 2] == atoms_ret[j * 3 + 2] &&
+                                atoms_ret[j * 3 + 2] <= min_z && z_left_cut) {
+                                // cut next step z
+                                // std::cout << "    z left" << std::endl;
+	                        edges_ret[j] *= 11;
+	                    }
+	                    if (atoms_ret[j * 3 + 2] == atoms_ret[j * 3 + 2] &&
+                                atoms_ret[j * 3 + 2] >= max_z && z_right_cut) {
+                                // cut next step z
+                                // std::cout << "    z right" << std::endl;
+	                        edges_ret[j] *= 13;
+	                    }
+	    		if (edges_ret[j] == -1) {
+                                 // CHECK THIS AGAIN
+                                edges_ret[j] = 1;
+	    		}
+	                    // std::cout << "edges ret [" << i << "]: " << edges_ret[i] << std::endl;
+	                }
+	    	}
+	        }
 	    }
+	    // update return values, dont double count edges
+	    // add l/r trap data to output
+	    // i think this is what i did above
+	    return;
 	}
+	// }
 
 	// other dimension cuts
 	// float y_ave = 0;
@@ -1035,7 +1045,7 @@ void  trapezoid(torch::jit::script::Module module,
 	int j = 0;
         // std::cout << "poses before upper, t0: " << t0 << ", t1: " << t1 << std::endl;
 	for (int k = 0; k < nat1; k++) {
-	    if ( atom_times_bottom[k] == t0 + halftime && atom_edges_bottom[k] != 0 ) {
+	    if ( atom_times_bottom[k] == t0 + halftime && atom_edges_bottom[k] > 0 ) {
                 // top row of atoms, may or may not get cut on next time step
 		// confirmed accurate
 	        // std::cout << k << ": " << atoms_bottom[k * 3 + 0] << ", " << atoms_bottom[k * 3 + 1] << ", " << atoms_bottom[k * 3 + 2] << std::endl;
@@ -1046,8 +1056,8 @@ void  trapezoid(torch::jit::script::Module module,
 	        atom_types_left[nat_left] = atom_types_bottom[k];
 	        nat_left++;
 	    }
-	    if ( (atom_times_bottom[k] == t0 + 1 && atom_edges_bottom[k] == 0) ||
-                 (atom_edges_bottom[k] != 1 && atom_edges_bottom[k] != 0) ) {
+	    if ( (atom_times_bottom[k] == t0 + 1 && atom_edges_bottom[k] < 0) ||
+                 (atom_edges_bottom[k] != 1 && atom_edges_bottom[k] > 0) ) {
                 // edges, already got cut, will get cut on next step, or (are on the bottom row and inaccurate)
 		// only want inaccurate ones on bottom row, otherwise just want edges
 	        // check this, maybe ones that will get cut on next time step should be down here?
@@ -1138,7 +1148,7 @@ void  trapezoid(torch::jit::script::Module module,
 	          z_right_cut);
 	std::cout << "done top trap" << std::endl;
 	for (int i = 0; i < nat_left;  i++) {
-            if (atom_edges_top[i] != 0) {
+            if (atom_edges_top[i] > 0) {
                 atoms_ret[j * 3 + 0] = atoms_top[i * 3 + 0];
                 atoms_ret[j * 3 + 1] = atoms_top[i * 3 + 1];
                 atoms_ret[j * 3 + 2] = atoms_top[i * 3 + 2];
