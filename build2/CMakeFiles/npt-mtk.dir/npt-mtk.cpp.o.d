@@ -2,74 +2,65 @@ CMakeFiles/npt-mtk.dir/npt-mtk.cpp.o: \
   /Users/isabelrosa/Downloads/meng/npt-mtk.cpp \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/cmath \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/__config \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/pthread.h \
-  /usr/local/bin/cilk_stuff/bin/../include/c++/v1/math.h \
-  /usr/local/bin/cilk_stuff/bin/../include/c++/v1/stdlib.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/stdlib.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/stdlib.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/Availability.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/AvailabilityVersions.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/AvailabilityInternal.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/cdefs.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_symbol_aliasing.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_posix_availability.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/_types.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/machine/_types.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/i386/_types.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_pthread/_pthread_types.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/wait.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_pid_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_id_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/signal.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/appleapiopts.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/machine/signal.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/i386/signal.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/machine/_mcontext.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/i386/_mcontext.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/mach/machine/_structs.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/mach/i386/_structs.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/machine/types.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/i386/types.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_int8_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_int16_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_int32_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_int64_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_u_int8_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_u_int16_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_u_int32_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_u_int64_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_intptr_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_uintptr_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_pthread/_pthread_attr_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_sigaltstack.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_ucontext.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_sigset_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_size_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_uid_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/resource.h \
-  /usr/local/bin/cilk_stuff/bin/../include/c++/v1/stdint.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/stdint.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_timeval.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/machine/endian.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/i386/endian.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_endian.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/libkern/_OSByteOrder.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/libkern/i386/_OSByteOrder.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/alloca.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_ct_rune_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_rune_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_wchar_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_null.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/malloc/_malloc.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_dev_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_mode_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/_types/_uint32_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/math.h \
+  /usr/local/include/pthread.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/math.h \
+  /usr/local/include/math.h /usr/local/include/sys/cdefs.h \
+  /usr/local/include/sys/_symbol_aliasing.h \
+  /usr/local/include/sys/_posix_availability.h \
+  /usr/local/include/Availability.h \
+  /usr/local/include/AvailabilityVersions.h \
+  /usr/local/include/AvailabilityInternal.h /usr/local/include/stdlib.h \
+  /usr/local/include/_types.h /usr/local/include/sys/_types.h \
+  /usr/local/include/machine/_types.h /usr/local/include/i386/_types.h \
+  /usr/local/include/sys/_pthread/_pthread_types.h \
+  /usr/local/include/sys/wait.h /usr/local/include/sys/_types/_pid_t.h \
+  /usr/local/include/sys/_types/_id_t.h /usr/local/include/sys/signal.h \
+  /usr/local/include/sys/appleapiopts.h \
+  /usr/local/include/machine/signal.h /usr/local/include/i386/signal.h \
+  /usr/local/include/machine/_mcontext.h \
+  /usr/local/include/i386/_mcontext.h \
+  /usr/local/include/mach/machine/_structs.h \
+  /usr/local/include/mach/i386/_structs.h \
+  /usr/local/include/machine/types.h /usr/local/include/i386/types.h \
+  /usr/local/include/sys/_types/_int8_t.h \
+  /usr/local/include/sys/_types/_int16_t.h \
+  /usr/local/include/sys/_types/_int32_t.h \
+  /usr/local/include/sys/_types/_int64_t.h \
+  /usr/local/include/sys/_types/_u_int8_t.h \
+  /usr/local/include/sys/_types/_u_int16_t.h \
+  /usr/local/include/sys/_types/_u_int32_t.h \
+  /usr/local/include/sys/_types/_u_int64_t.h \
+  /usr/local/include/sys/_types/_intptr_t.h \
+  /usr/local/include/sys/_types/_uintptr_t.h \
+  /usr/local/include/sys/_pthread/_pthread_attr_t.h \
+  /usr/local/include/sys/_types/_sigaltstack.h \
+  /usr/local/include/sys/_types/_ucontext.h \
+  /usr/local/include/sys/_types/_sigset_t.h \
+  /usr/local/include/sys/_types/_size_t.h \
+  /usr/local/include/sys/_types/_uid_t.h \
+  /usr/local/include/sys/resource.h /usr/local/include/stdint.h \
+  /usr/local/include/_types/_uint8_t.h \
+  /usr/local/include/_types/_uint16_t.h \
+  /usr/local/include/_types/_uint32_t.h \
+  /usr/local/include/_types/_uint64_t.h \
+  /usr/local/include/_types/_intmax_t.h \
+  /usr/local/include/_types/_uintmax_t.h \
+  /usr/local/include/sys/_types/_timeval.h \
+  /usr/local/include/machine/endian.h /usr/local/include/i386/endian.h \
+  /usr/local/include/sys/_endian.h \
+  /usr/local/include/libkern/_OSByteOrder.h \
+  /usr/local/include/libkern/i386/_OSByteOrder.h \
+  /usr/local/include/alloca.h /usr/local/include/sys/_types/_ct_rune_t.h \
+  /usr/local/include/sys/_types/_rune_t.h \
+  /usr/local/include/sys/_types/_wchar_t.h \
+  /usr/local/include/sys/_types/_null.h \
+  /usr/local/include/malloc/_malloc.h \
+  /usr/local/include/sys/_types/_dev_t.h \
+  /usr/local/include/sys/_types/_mode_t.h \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/type_traits \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/cstddef \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/version \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/stddef.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/stddef.h \
   /usr/local/bin/cilk_stuff/lib/clang/10.0.1/include/stddef.h \
   /usr/local/bin/cilk_stuff/lib/clang/10.0.1/include/__stddef_max_align_t.h \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/__nullptr \
@@ -78,8 +69,19 @@ CMakeFiles/npt-mtk.dir/npt-mtk.cpp.o: \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/iostream \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/ios \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/iosfwd \
-  /usr/local/bin/cilk_stuff/bin/../include/c++/v1/wchar.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/wchar.h \
+  /usr/local/include/wchar.h /usr/local/include/sys/_types/_mbstate_t.h \
+  /usr/local/bin/cilk_stuff/lib/clang/10.0.1/include/stdarg.h \
+  /usr/local/include/stdio.h /usr/local/include/_stdio.h \
+  /usr/local/include/sys/_types/_va_list.h \
+  /usr/local/include/sys/stdio.h /usr/local/include/_ctermid.h \
+  /usr/local/include/sys/_types/_off_t.h \
+  /usr/local/include/sys/_types/_ssize_t.h /usr/local/include/time.h \
+  /usr/local/include/sys/_types/_clock_t.h \
+  /usr/local/include/sys/_types/_time_t.h \
+  /usr/local/include/sys/_types/_timespec.h /usr/local/include/_wctype.h \
+  /usr/local/include/__wctype.h /usr/local/include/sys/_types/_wint_t.h \
+  /usr/local/include/_types/_wctype_t.h /usr/local/include/ctype.h \
+  /usr/local/include/_ctype.h /usr/local/include/runetype.h \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/__locale \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/string \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/string_view \
@@ -87,8 +89,8 @@ CMakeFiles/npt-mtk.dir/npt-mtk.cpp.o: \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/algorithm \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/initializer_list \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/cstring \
-  /usr/local/bin/cilk_stuff/bin/../include/c++/v1/string.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/string.h \
+  /usr/local/include/string.h /usr/local/include/sys/_types/_rsize_t.h \
+  /usr/local/include/sys/_types/_errno_t.h /usr/local/include/strings.h \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/utility \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/__tuple \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/cstdint \
@@ -106,90 +108,78 @@ CMakeFiles/npt-mtk.dir/npt-mtk.cpp.o: \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/functional \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/bit \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/cstdio \
-  /usr/local/bin/cilk_stuff/bin/../include/c++/v1/stdio.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/stdio.h \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/cwchar \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/cwctype \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/cctype \
-  /usr/local/bin/cilk_stuff/bin/../include/c++/v1/ctype.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/ctype.h \
-  /usr/local/bin/cilk_stuff/bin/../include/c++/v1/wctype.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/wctype.h \
+  /usr/local/include/wctype.h /usr/local/include/_types/_wctrans_t.h \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/mutex \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/__mutex_base \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/chrono \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/ctime \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/time.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_clock_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_time_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_timespec.h \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/ratio \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/climits \
-  /usr/local/bin/cilk_stuff/bin/../include/c++/v1/limits.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/limits.h \
+  /usr/local/include/limits.h /usr/local/include/machine/limits.h \
+  /usr/local/include/i386/limits.h /usr/local/include/i386/_limits.h \
+  /usr/local/include/sys/syslimits.h \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/system_error \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/__errc \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/cerrno \
-  /usr/local/bin/cilk_stuff/bin/../include/c++/v1/errno.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/errno.h \
+  /usr/local/include/errno.h /usr/local/include/sys/errno.h \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/__threading_support \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/pthread/sched.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/pthread/pthread_impl.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_pthread/_pthread_cond_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_pthread/_pthread_condattr_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_pthread/_pthread_key_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_pthread/_pthread_mutex_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_pthread/_pthread_mutexattr_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_pthread/_pthread_once_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_pthread/_pthread_rwlock_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_pthread/_pthread_rwlockattr_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_pthread/_pthread_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/pthread/qos.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/qos.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_mach_port_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sched.h \
-  /usr/local/bin/cilk_stuff/bin/../include/c++/v1/locale.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/locale.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/xlocale.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/_locale.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/_xlocale.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/xlocale/_stdlib.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/xlocale/_time.h \
+  /usr/local/include/pthread/sched.h \
+  /usr/local/include/pthread/pthread_impl.h \
+  /usr/local/include/sys/_pthread/_pthread_cond_t.h \
+  /usr/local/include/sys/_pthread/_pthread_condattr_t.h \
+  /usr/local/include/sys/_pthread/_pthread_key_t.h \
+  /usr/local/include/sys/_pthread/_pthread_mutex_t.h \
+  /usr/local/include/sys/_pthread/_pthread_mutexattr_t.h \
+  /usr/local/include/sys/_pthread/_pthread_once_t.h \
+  /usr/local/include/sys/_pthread/_pthread_rwlock_t.h \
+  /usr/local/include/sys/_pthread/_pthread_rwlockattr_t.h \
+  /usr/local/include/sys/_pthread/_pthread_t.h \
+  /usr/local/include/pthread/qos.h /usr/local/include/sys/qos.h \
+  /usr/local/include/sys/_types/_mach_port_t.h \
+  /usr/local/include/sched.h /usr/local/include/locale.h \
+  /usr/local/include/_locale.h /usr/local/include/xlocale.h \
+  /usr/local/include/_xlocale.h /usr/local/include/xlocale/_ctype.h \
+  /usr/local/include/xlocale/__wctype.h \
+  /usr/local/include/xlocale/_stdio.h \
+  /usr/local/include/xlocale/_stdlib.h \
+  /usr/local/include/xlocale/_string.h \
+  /usr/local/include/xlocale/_time.h /usr/local/include/xlocale/_wchar.h \
+  /usr/local/include/stddef.h /usr/local/include/sys/_types/_offsetof.h \
+  /usr/local/include/sys/_types/_ptrdiff_t.h \
+  /usr/local/include/xlocale/_wctype.h \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/streambuf \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/istream \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/ostream \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/locale \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/nl_types.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/types.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_u_char.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_u_short.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_u_int.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_caddr_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_blkcnt_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_blksize_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_gid_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_in_addr_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_in_port_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_ino_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_ino64_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_key_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_nlink_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_off_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_ssize_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_useconds_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_suseconds_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_rsize_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_errno_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_fd_def.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_fd_setsize.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_fd_set.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_fd_clr.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_fd_zero.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_fd_isset.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_fd_copy.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_fsblkcnt_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/sys/_types/_fsfilcnt_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/_types/_nl_item.h \
+  /usr/local/include/nl_types.h /usr/local/include/sys/types.h \
+  /usr/local/include/sys/_types/_u_char.h \
+  /usr/local/include/sys/_types/_u_short.h \
+  /usr/local/include/sys/_types/_u_int.h \
+  /usr/local/include/sys/_types/_caddr_t.h \
+  /usr/local/include/sys/_types/_blkcnt_t.h \
+  /usr/local/include/sys/_types/_blksize_t.h \
+  /usr/local/include/sys/_types/_gid_t.h \
+  /usr/local/include/sys/_types/_in_addr_t.h \
+  /usr/local/include/sys/_types/_in_port_t.h \
+  /usr/local/include/sys/_types/_ino_t.h \
+  /usr/local/include/sys/_types/_ino64_t.h \
+  /usr/local/include/sys/_types/_key_t.h \
+  /usr/local/include/sys/_types/_nlink_t.h \
+  /usr/local/include/sys/_types/_useconds_t.h \
+  /usr/local/include/sys/_types/_suseconds_t.h \
+  /usr/local/include/sys/_types/_fd_def.h \
+  /usr/local/include/sys/_types/_fd_setsize.h \
+  /usr/local/include/sys/_types/_fd_set.h \
+  /usr/local/include/sys/_types/_fd_clr.h \
+  /usr/local/include/sys/_types/_fd_zero.h \
+  /usr/local/include/sys/_types/_fd_isset.h \
+  /usr/local/include/sys/_types/_fd_copy.h \
+  /usr/local/include/sys/_types/_fsblkcnt_t.h \
+  /usr/local/include/sys/_types/_fsfilcnt_t.h \
+  /usr/local/include/_types/_nl_item.h \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/__bsd_locale_defaults.h \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/bitset \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/__bit_reference \
@@ -200,14 +190,13 @@ CMakeFiles/npt-mtk.dir/npt-mtk.cpp.o: \
   /Users/isabelrosa/Downloads/libtorch_2/include/torch/csrc/api/include/torch/types.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/ATen/ATen.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/core/Allocator.h \
-  /usr/local/bin/cilk_stuff/bin/../include/c++/v1/stddef.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/core/Device.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/core/DeviceType.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/macros/Macros.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/macros/cmake_macros.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/macros/Export.h \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/sstream \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/TargetConditionals.h \
+  /usr/local/include/TargetConditionals.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/util/Exception.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/util/Deprecated.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/util/StringUtil.h \
@@ -227,7 +216,7 @@ CMakeFiles/npt-mtk.dir/npt-mtk.cpp.o: \
   /Users/isabelrosa/Downloads/libtorch_2/include/ATen/core/TensorBody.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/ATen/Operators.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/core/Scalar.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/assert.h \
+  /usr/local/include/assert.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/core/OptionalRef.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/core/ScalarType.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/util/ArrayRef.h \
@@ -270,8 +259,7 @@ CMakeFiles/npt-mtk.dir/npt-mtk.cpp.o: \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/util/TypeIndex.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/util/ConstexprCrc.h \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/cinttypes \
-  /usr/local/bin/cilk_stuff/bin/../include/c++/v1/inttypes.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/inttypes.h \
+  /usr/local/include/inttypes.h /usr/local/include/xlocale/_inttypes.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/util/flat_hash_map.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/core/QScheme.h \
   /Users/isabelrosa/Downloads/libtorch_2/include/c10/core/Stream.h \
@@ -483,7 +471,7 @@ CMakeFiles/npt-mtk.dir/npt-mtk.cpp.o: \
   /usr/local/include/cleri/optional.h /usr/local/include/cleri/choice.h \
   /usr/local/include/cleri/dup.h /usr/local/include/cleri/list.h \
   /usr/local/bin/cilk_stuff/bin/../include/c++/v1/stdbool.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.0.sdk/usr/include/c++/v1/stdbool.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/stdbool.h \
   /usr/local/include/cleri/regex.h /usr/local/include/pcre2.h \
   /usr/local/include/cleri/repeat.h /usr/local/include/cleri/token.h \
   /usr/local/include/cleri/tokens.h /usr/local/include/cleri/grammar.h \
@@ -492,6 +480,7 @@ CMakeFiles/npt-mtk.dir/npt-mtk.cpp.o: \
   /usr/local/include/cleri/parse.h /usr/local/include/cleri/kwcache.h \
   /usr/local/include/cleri/this.h /usr/local/include/cleri/ref.h \
   /usr/local/include/cleri/version.h \
+  /usr/local/bin/cilk_stuff/lib/clang/10.0.1/include/cilk/cilk.h \
   /Users/isabelrosa/Downloads/meng/extxyz/libextxyz/extxyz_kv_grammar.h \
   /Users/isabelrosa/Downloads/meng/extxyz/libextxyz/extxyz_kv_grammar.c \
   /Users/isabelrosa/Downloads/meng/extxyz/libextxyz/extxyz.h

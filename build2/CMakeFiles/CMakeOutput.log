@@ -1,0 +1,418 @@
+The system is: Darwin - 21.1.0 - x86_64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: /usr/local/bin/cilk_stuff/bin/clang 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+
+The C compiler identification is Clang, found in "/Users/isabelrosa/Downloads/meng/build2/CMakeFiles/3.22.1/CompilerIdC/a.out"
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler: /usr/local/bin/cilk_stuff/bin/clang++ 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+
+The CXX compiler identification is Clang, found in "/Users/isabelrosa/Downloads/meng/build2/CMakeFiles/3.22.1/CompilerIdCXX/a.out"
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_050e9/fast && /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_050e9.dir/build.make CMakeFiles/cmTC_050e9.dir/build
+Building C object CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o
+/usr/local/bin/cilk_stuff/bin/clang   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk   -v -Wl,-v -MD -MT CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o -MF CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o.d -o CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o -c /usr/local/Cellar/cmake/3.22.1/share/cmake/Modules/CMakeCCompilerABI.c
+clang version 10.0.1 (git@github.com:OpenCilk/opencilk-project.git 8435006eea5d32f9cf895a666496b89613e2cbc1)
+Target: x86_64-apple-darwin21.1.0
+Thread model: posix
+InstalledDir: /usr/local/bin/cilk_stuff/bin
+clang-10: warning: -Wl,-v: 'linker' input unused [-Wunused-command-line-argument]
+ (in-process)
+ "/usr/local/bin/cilk_stuff/bin/clang-10" -cc1 -triple x86_64-apple-macosx10.17.0 -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -emit-obj -mrelax-all -disable-free -main-file-name CMakeCCompilerABI.c -mrelocation-model pic -pic-level 2 -mthread-model posix -mframe-pointer=all -fno-rounding-math -masm-verbose -munwind-tables -target-sdk-version=12.0 -target-cpu penryn -dwarf-column-info -debugger-tuning=lldb -target-linker-version 609.8 -v -resource-dir /usr/local/bin/cilk_stuff/lib/clang/10.0.1 -dependency-file CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o.d -MT CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o -sys-header-deps -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I. -I/usr/local/include -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include -internal-isystem /usr/local/bin/cilk_stuff/lib/clang/10.0.1/include -internal-externc-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -fdebug-compilation-dir /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fgnuc-version=4.2.1 -fobjc-runtime=macosx-10.17.0 -fmax-type-align=16 -fdiagnostics-show-option -o CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o -x c /usr/local/Cellar/cmake/3.22.1/share/cmake/Modules/CMakeCCompilerABI.c
+clang -cc1 version 10.0.1 based upon LLVM 10.0.1 default target x86_64-apple-darwin21.1.0
+ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include"
+ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/Library/Frameworks"
+#include "..." search starts here:
+#include <...> search starts here:
+ .
+ /usr/local/include
+ /usr/local/bin/cilk_stuff/lib/clang/10.0.1/include
+ /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include
+ /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks (framework directory)
+End of search list.
+Linking C executable cmTC_050e9
+/usr/local/Cellar/cmake/3.22.1/bin/cmake -E cmake_link_script CMakeFiles/cmTC_050e9.dir/link.txt --verbose=1
+/usr/local/bin/cilk_stuff/bin/clang  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o -o cmTC_050e9 
+clang version 10.0.1 (git@github.com:OpenCilk/opencilk-project.git 8435006eea5d32f9cf895a666496b89613e2cbc1)
+Target: x86_64-apple-darwin21.1.0
+Thread model: posix
+InstalledDir: /usr/local/bin/cilk_stuff/bin
+ "/usr/bin/ld" -demangle -lto_library /usr/local/bin/cilk_stuff/lib/libLTO.dylib -dynamic -arch x86_64 -platform_version macos 10.17.0 12.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -o cmTC_050e9 -L/usr/local/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o -lSystem /usr/local/bin/cilk_stuff/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a
+@(#)PROGRAM:ld  PROJECT:ld64-711
+BUILD 18:11:15 Aug  3 2021
+configured to support archs: armv6 armv7 armv7s arm64 arm64e arm64_32 i386 x86_64 x86_64h armv6m armv7k armv7m armv7em
+Library search paths:
+	/usr/local/lib
+	/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib
+Framework search paths:
+	/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/
+
+
+
+Parsed C implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [.]
+    add: [/usr/local/include]
+    add: [/usr/local/bin/cilk_stuff/lib/clang/10.0.1/include]
+    add: [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include]
+  end of search list found
+  skipping relative include dir [.]
+  collapse include dir [/usr/local/include] ==> [/usr/local/include]
+  collapse include dir [/usr/local/bin/cilk_stuff/lib/clang/10.0.1/include] ==> [/usr/local/bin/cilk_stuff/lib/clang/10.0.1/include]
+  collapse include dir [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include] ==> [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include]
+  implicit include dirs: [/usr/local/include;/usr/local/bin/cilk_stuff/lib/clang/10.0.1/include;/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include]
+
+
+Parsed C implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/make -f Makefile cmTC_050e9/fast && /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_050e9.dir/build.make CMakeFiles/cmTC_050e9.dir/build]
+  ignore line: [Building C object CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/usr/local/bin/cilk_stuff/bin/clang   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk   -v -Wl -v -MD -MT CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o -MF CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o.d -o CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o -c /usr/local/Cellar/cmake/3.22.1/share/cmake/Modules/CMakeCCompilerABI.c]
+  ignore line: [clang version 10.0.1 (git@github.com:OpenCilk/opencilk-project.git 8435006eea5d32f9cf895a666496b89613e2cbc1)]
+  ignore line: [Target: x86_64-apple-darwin21.1.0]
+  ignore line: [Thread model: posix]
+  ignore line: [InstalledDir: /usr/local/bin/cilk_stuff/bin]
+  ignore line: [clang-10: warning: -Wl -v: 'linker' input unused [-Wunused-command-line-argument]]
+  ignore line: [ (in-process)]
+  ignore line: [ "/usr/local/bin/cilk_stuff/bin/clang-10" -cc1 -triple x86_64-apple-macosx10.17.0 -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -emit-obj -mrelax-all -disable-free -main-file-name CMakeCCompilerABI.c -mrelocation-model pic -pic-level 2 -mthread-model posix -mframe-pointer=all -fno-rounding-math -masm-verbose -munwind-tables -target-sdk-version=12.0 -target-cpu penryn -dwarf-column-info -debugger-tuning=lldb -target-linker-version 609.8 -v -resource-dir /usr/local/bin/cilk_stuff/lib/clang/10.0.1 -dependency-file CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o.d -MT CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o -sys-header-deps -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I. -I/usr/local/include -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include -internal-isystem /usr/local/bin/cilk_stuff/lib/clang/10.0.1/include -internal-externc-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -fdebug-compilation-dir /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fgnuc-version=4.2.1 -fobjc-runtime=macosx-10.17.0 -fmax-type-align=16 -fdiagnostics-show-option -o CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o -x c /usr/local/Cellar/cmake/3.22.1/share/cmake/Modules/CMakeCCompilerABI.c]
+  ignore line: [clang -cc1 version 10.0.1 based upon LLVM 10.0.1 default target x86_64-apple-darwin21.1.0]
+  ignore line: [ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include"]
+  ignore line: [ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/Library/Frameworks"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ .]
+  ignore line: [ /usr/local/include]
+  ignore line: [ /usr/local/bin/cilk_stuff/lib/clang/10.0.1/include]
+  ignore line: [ /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include]
+  ignore line: [ /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks (framework directory)]
+  ignore line: [End of search list.]
+  ignore line: [Linking C executable cmTC_050e9]
+  ignore line: [/usr/local/Cellar/cmake/3.22.1/bin/cmake -E cmake_link_script CMakeFiles/cmTC_050e9.dir/link.txt --verbose=1]
+  ignore line: [/usr/local/bin/cilk_stuff/bin/clang  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -Wl -search_paths_first -Wl -headerpad_max_install_names  -v -Wl -v CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o -o cmTC_050e9 ]
+  ignore line: [clang version 10.0.1 (git@github.com:OpenCilk/opencilk-project.git 8435006eea5d32f9cf895a666496b89613e2cbc1)]
+  ignore line: [Target: x86_64-apple-darwin21.1.0]
+  ignore line: [Thread model: posix]
+  ignore line: [InstalledDir: /usr/local/bin/cilk_stuff/bin]
+  link line: [ "/usr/bin/ld" -demangle -lto_library /usr/local/bin/cilk_stuff/lib/libLTO.dylib -dynamic -arch x86_64 -platform_version macos 10.17.0 12.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -o cmTC_050e9 -L/usr/local/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o -lSystem /usr/local/bin/cilk_stuff/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
+    arg [/usr/bin/ld] ==> ignore
+    arg [-demangle] ==> ignore
+    arg [-lto_library] ==> ignore, skip following value
+    arg [/usr/local/bin/cilk_stuff/lib/libLTO.dylib] ==> skip value of -lto_library
+    arg [-dynamic] ==> ignore
+    arg [-arch] ==> ignore
+    arg [x86_64] ==> ignore
+    arg [-platform_version] ==> ignore
+    arg [macos] ==> ignore
+    arg [10.17.0] ==> ignore
+    arg [12.0] ==> ignore
+    arg [-syslibroot] ==> ignore
+    arg [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_050e9] ==> ignore
+    arg [-L/usr/local/lib] ==> dir [/usr/local/lib]
+    arg [-search_paths_first] ==> ignore
+    arg [-headerpad_max_install_names] ==> ignore
+    arg [-v] ==> ignore
+    arg [CMakeFiles/cmTC_050e9.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [-lSystem] ==> lib [System]
+    arg [/usr/local/bin/cilk_stuff/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a] ==> lib [/usr/local/bin/cilk_stuff/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
+  Library search paths: [;/usr/local/lib;/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib]
+  Framework search paths: [;/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/]
+  remove lib [System]
+  remove lib [/usr/local/bin/cilk_stuff/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
+  collapse library dir [/usr/local/lib] ==> [/usr/local/lib]
+  collapse library dir [/usr/local/lib] ==> [/usr/local/lib]
+  collapse library dir [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib] ==> [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib]
+  collapse framework dir [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/] ==> [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks]
+  implicit libs: []
+  implicit objs: []
+  implicit dirs: [/usr/local/lib;/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib]
+  implicit fwks: [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks]
+
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_f288d/fast && /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_f288d.dir/build.make CMakeFiles/cmTC_f288d.dir/build
+Building CXX object CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o
+/usr/local/bin/cilk_stuff/bin/clang++   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk   -v -Wl,-v -MD -MT CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o -c /usr/local/Cellar/cmake/3.22.1/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+clang version 10.0.1 (git@github.com:OpenCilk/opencilk-project.git 8435006eea5d32f9cf895a666496b89613e2cbc1)
+Target: x86_64-apple-darwin21.1.0
+Thread model: posix
+InstalledDir: /usr/local/bin/cilk_stuff/bin
+clang-10: warning: -Wl,-v: 'linker' input unused [-Wunused-command-line-argument]
+ (in-process)
+ "/usr/local/bin/cilk_stuff/bin/clang-10" -cc1 -triple x86_64-apple-macosx10.17.0 -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -emit-obj -mrelax-all -disable-free -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -mthread-model posix -mframe-pointer=all -fno-rounding-math -masm-verbose -munwind-tables -target-sdk-version=12.0 -target-cpu penryn -dwarf-column-info -debugger-tuning=lldb -target-linker-version 609.8 -v -resource-dir /usr/local/bin/cilk_stuff/lib/clang/10.0.1 -dependency-file CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I. -I/usr/local/include -stdlib=libc++ -internal-isystem /usr/local/bin/cilk_stuff/bin/../include/c++/v1 -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include -internal-isystem /usr/local/bin/cilk_stuff/lib/clang/10.0.1/include -internal-externc-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -fdeprecated-macro -fdebug-compilation-dir /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fgnuc-version=4.2.1 -fobjc-runtime=macosx-10.17.0 -fcxx-exceptions -fexceptions -fmax-type-align=16 -fdiagnostics-show-option -o CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o -x c++ /usr/local/Cellar/cmake/3.22.1/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+clang -cc1 version 10.0.1 based upon LLVM 10.0.1 default target x86_64-apple-darwin21.1.0
+ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include"
+ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/Library/Frameworks"
+#include "..." search starts here:
+#include <...> search starts here:
+ .
+ /usr/local/include
+ /usr/local/bin/cilk_stuff/bin/../include/c++/v1
+ /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1
+ /usr/local/bin/cilk_stuff/lib/clang/10.0.1/include
+ /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include
+ /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks (framework directory)
+End of search list.
+Linking CXX executable cmTC_f288d
+/usr/local/Cellar/cmake/3.22.1/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f288d.dir/link.txt --verbose=1
+/usr/local/bin/cilk_stuff/bin/clang++  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_f288d 
+clang version 10.0.1 (git@github.com:OpenCilk/opencilk-project.git 8435006eea5d32f9cf895a666496b89613e2cbc1)
+Target: x86_64-apple-darwin21.1.0
+Thread model: posix
+InstalledDir: /usr/local/bin/cilk_stuff/bin
+ "/usr/bin/ld" -demangle -lto_library /usr/local/bin/cilk_stuff/lib/libLTO.dylib -dynamic -arch x86_64 -platform_version macos 10.17.0 12.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -o cmTC_f288d -L/usr/local/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /usr/local/bin/cilk_stuff/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a
+@(#)PROGRAM:ld  PROJECT:ld64-711
+BUILD 18:11:15 Aug  3 2021
+configured to support archs: armv6 armv7 armv7s arm64 arm64e arm64_32 i386 x86_64 x86_64h armv6m armv7k armv7m armv7em
+Library search paths:
+	/usr/local/lib
+	/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib
+Framework search paths:
+	/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/
+
+
+
+Parsed CXX implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [.]
+    add: [/usr/local/include]
+    add: [/usr/local/bin/cilk_stuff/bin/../include/c++/v1]
+    add: [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1]
+    add: [/usr/local/bin/cilk_stuff/lib/clang/10.0.1/include]
+    add: [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include]
+  end of search list found
+  skipping relative include dir [.]
+  collapse include dir [/usr/local/include] ==> [/usr/local/include]
+  collapse include dir [/usr/local/bin/cilk_stuff/bin/../include/c++/v1] ==> [/usr/local/bin/cilk_stuff/include/c++/v1]
+  collapse include dir [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1] ==> [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1]
+  collapse include dir [/usr/local/bin/cilk_stuff/lib/clang/10.0.1/include] ==> [/usr/local/bin/cilk_stuff/lib/clang/10.0.1/include]
+  collapse include dir [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include] ==> [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include]
+  implicit include dirs: [/usr/local/include;/usr/local/bin/cilk_stuff/include/c++/v1;/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1;/usr/local/bin/cilk_stuff/lib/clang/10.0.1/include;/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include]
+
+
+Parsed CXX implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/make -f Makefile cmTC_f288d/fast && /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_f288d.dir/build.make CMakeFiles/cmTC_f288d.dir/build]
+  ignore line: [Building CXX object CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/usr/local/bin/cilk_stuff/bin/clang++   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk   -v -Wl -v -MD -MT CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o -c /usr/local/Cellar/cmake/3.22.1/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [clang version 10.0.1 (git@github.com:OpenCilk/opencilk-project.git 8435006eea5d32f9cf895a666496b89613e2cbc1)]
+  ignore line: [Target: x86_64-apple-darwin21.1.0]
+  ignore line: [Thread model: posix]
+  ignore line: [InstalledDir: /usr/local/bin/cilk_stuff/bin]
+  ignore line: [clang-10: warning: -Wl -v: 'linker' input unused [-Wunused-command-line-argument]]
+  ignore line: [ (in-process)]
+  ignore line: [ "/usr/local/bin/cilk_stuff/bin/clang-10" -cc1 -triple x86_64-apple-macosx10.17.0 -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -emit-obj -mrelax-all -disable-free -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -mthread-model posix -mframe-pointer=all -fno-rounding-math -masm-verbose -munwind-tables -target-sdk-version=12.0 -target-cpu penryn -dwarf-column-info -debugger-tuning=lldb -target-linker-version 609.8 -v -resource-dir /usr/local/bin/cilk_stuff/lib/clang/10.0.1 -dependency-file CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I. -I/usr/local/include -stdlib=libc++ -internal-isystem /usr/local/bin/cilk_stuff/bin/../include/c++/v1 -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -internal-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include -internal-isystem /usr/local/bin/cilk_stuff/lib/clang/10.0.1/include -internal-externc-isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -fdeprecated-macro -fdebug-compilation-dir /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fgnuc-version=4.2.1 -fobjc-runtime=macosx-10.17.0 -fcxx-exceptions -fexceptions -fmax-type-align=16 -fdiagnostics-show-option -o CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o -x c++ /usr/local/Cellar/cmake/3.22.1/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [clang -cc1 version 10.0.1 based upon LLVM 10.0.1 default target x86_64-apple-darwin21.1.0]
+  ignore line: [ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/local/include"]
+  ignore line: [ignoring nonexistent directory "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/Library/Frameworks"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ .]
+  ignore line: [ /usr/local/include]
+  ignore line: [ /usr/local/bin/cilk_stuff/bin/../include/c++/v1]
+  ignore line: [ /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1]
+  ignore line: [ /usr/local/bin/cilk_stuff/lib/clang/10.0.1/include]
+  ignore line: [ /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include]
+  ignore line: [ /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks (framework directory)]
+  ignore line: [End of search list.]
+  ignore line: [Linking CXX executable cmTC_f288d]
+  ignore line: [/usr/local/Cellar/cmake/3.22.1/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f288d.dir/link.txt --verbose=1]
+  ignore line: [/usr/local/bin/cilk_stuff/bin/clang++  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -Wl -search_paths_first -Wl -headerpad_max_install_names  -v -Wl -v CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_f288d ]
+  ignore line: [clang version 10.0.1 (git@github.com:OpenCilk/opencilk-project.git 8435006eea5d32f9cf895a666496b89613e2cbc1)]
+  ignore line: [Target: x86_64-apple-darwin21.1.0]
+  ignore line: [Thread model: posix]
+  ignore line: [InstalledDir: /usr/local/bin/cilk_stuff/bin]
+  link line: [ "/usr/bin/ld" -demangle -lto_library /usr/local/bin/cilk_stuff/lib/libLTO.dylib -dynamic -arch x86_64 -platform_version macos 10.17.0 12.0 -syslibroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -o cmTC_f288d -L/usr/local/lib -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /usr/local/bin/cilk_stuff/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
+    arg [/usr/bin/ld] ==> ignore
+    arg [-demangle] ==> ignore
+    arg [-lto_library] ==> ignore, skip following value
+    arg [/usr/local/bin/cilk_stuff/lib/libLTO.dylib] ==> skip value of -lto_library
+    arg [-dynamic] ==> ignore
+    arg [-arch] ==> ignore
+    arg [x86_64] ==> ignore
+    arg [-platform_version] ==> ignore
+    arg [macos] ==> ignore
+    arg [10.17.0] ==> ignore
+    arg [12.0] ==> ignore
+    arg [-syslibroot] ==> ignore
+    arg [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_f288d] ==> ignore
+    arg [-L/usr/local/lib] ==> dir [/usr/local/lib]
+    arg [-search_paths_first] ==> ignore
+    arg [-headerpad_max_install_names] ==> ignore
+    arg [-v] ==> ignore
+    arg [CMakeFiles/cmTC_f288d.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [-lc++] ==> lib [c++]
+    arg [-lSystem] ==> lib [System]
+    arg [/usr/local/bin/cilk_stuff/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a] ==> lib [/usr/local/bin/cilk_stuff/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
+  Library search paths: [;/usr/local/lib;/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib]
+  Framework search paths: [;/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/]
+  remove lib [System]
+  remove lib [/usr/local/bin/cilk_stuff/lib/clang/10.0.1/lib/darwin/libclang_rt.osx.a]
+  collapse library dir [/usr/local/lib] ==> [/usr/local/lib]
+  collapse library dir [/usr/local/lib] ==> [/usr/local/lib]
+  collapse library dir [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib] ==> [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib]
+  collapse framework dir [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/] ==> [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks]
+  implicit libs: [c++]
+  implicit objs: []
+  implicit dirs: [/usr/local/lib;/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib]
+  implicit fwks: [/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks]
+
+
+Determining if the include file pthread.h exists passed with the following output:
+Change Dir: /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_feb9a/fast && /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_feb9a.dir/build.make CMakeFiles/cmTC_feb9a.dir/build
+Building C object CMakeFiles/cmTC_feb9a.dir/CheckIncludeFile.c.o
+/usr/local/bin/cilk_stuff/bin/clang   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -MD -MT CMakeFiles/cmTC_feb9a.dir/CheckIncludeFile.c.o -MF CMakeFiles/cmTC_feb9a.dir/CheckIncludeFile.c.o.d -o CMakeFiles/cmTC_feb9a.dir/CheckIncludeFile.c.o -c /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+In file included from /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp/CheckIncludeFile.c:1:
+/usr/local/include/pthread.h:328:6: warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if !_PTHREAD_SWIFT_IMPORTER_NULLABILITY_COMPAT
+     ^
+/usr/local/include/pthread.h:197:2: note: expanded from macro '_PTHREAD_SWIFT_IMPORTER_NULLABILITY_COMPAT'
+        defined(SWIFT_CLASS_EXTRA) && (!defined(SWIFT_SDK_OVERLAY_PTHREAD_EPOCH) || (SWIFT_SDK_OVERLAY_PTHREAD_EPOCH < 1))
+        ^
+/usr/local/include/pthread.h:328:6: warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+/usr/local/include/pthread.h:197:34: note: expanded from macro '_PTHREAD_SWIFT_IMPORTER_NULLABILITY_COMPAT'
+        defined(SWIFT_CLASS_EXTRA) && (!defined(SWIFT_SDK_OVERLAY_PTHREAD_EPOCH) || (SWIFT_SDK_OVERLAY_PTHREAD_EPOCH < 1))
+                                        ^
+/usr/local/include/pthread.h:537:6: warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if !_PTHREAD_SWIFT_IMPORTER_NULLABILITY_COMPAT
+     ^
+/usr/local/include/pthread.h:197:2: note: expanded from macro '_PTHREAD_SWIFT_IMPORTER_NULLABILITY_COMPAT'
+        defined(SWIFT_CLASS_EXTRA) && (!defined(SWIFT_SDK_OVERLAY_PTHREAD_EPOCH) || (SWIFT_SDK_OVERLAY_PTHREAD_EPOCH < 1))
+        ^
+/usr/local/include/pthread.h:537:6: warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+/usr/local/include/pthread.h:197:34: note: expanded from macro '_PTHREAD_SWIFT_IMPORTER_NULLABILITY_COMPAT'
+        defined(SWIFT_CLASS_EXTRA) && (!defined(SWIFT_SDK_OVERLAY_PTHREAD_EPOCH) || (SWIFT_SDK_OVERLAY_PTHREAD_EPOCH < 1))
+                                        ^
+/usr/local/include/pthread.h:560:1: warning: unknown platform 'driverkit' in availability macro [-Wavailability]
+__API_UNAVAILABLE(ios, tvos, watchos, driverkit)
+^
+/usr/local/include/Availability.h:419:133: note: expanded from macro '__API_UNAVAILABLE'
+    #define __API_UNAVAILABLE(...) __API_UNAVAILABLE_GET_MACRO(__VA_ARGS__,__API_UNAVAILABLE7,__API_UNAVAILABLE6,__API_UNAVAILABLE5,__API_UNAVAILABLE4,__API_UNAVAILABLE3,__API_UNAVAILABLE2,__API_UNAVAILABLE1, 0)(__VA_ARGS__)
+                                                                                                                                    ^
+In file included from /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp/CheckIncludeFile.c:1:
+/usr/local/include/pthread.h:564:1: warning: unknown platform 'driverkit' in availability macro [-Wavailability]
+__API_UNAVAILABLE(ios, tvos, watchos, driverkit)
+^
+/usr/local/include/Availability.h:419:133: note: expanded from macro '__API_UNAVAILABLE'
+    #define __API_UNAVAILABLE(...) __API_UNAVAILABLE_GET_MACRO(__VA_ARGS__,__API_UNAVAILABLE7,__API_UNAVAILABLE6,__API_UNAVAILABLE5,__API_UNAVAILABLE4,__API_UNAVAILABLE3,__API_UNAVAILABLE2,__API_UNAVAILABLE1, 0)(__VA_ARGS__)
+                                                                                                                                    ^
+In file included from /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp/CheckIncludeFile.c:1:
+/usr/local/include/pthread.h:663:1: warning: unknown platform 'driverkit' in availability macro [-Wavailability]
+__API_UNAVAILABLE(ios, tvos, watchos, driverkit)
+^
+/usr/local/include/Availability.h:419:133: note: expanded from macro '__API_UNAVAILABLE'
+    #define __API_UNAVAILABLE(...) __API_UNAVAILABLE_GET_MACRO(__VA_ARGS__,__API_UNAVAILABLE7,__API_UNAVAILABLE6,__API_UNAVAILABLE5,__API_UNAVAILABLE4,__API_UNAVAILABLE3,__API_UNAVAILABLE2,__API_UNAVAILABLE1, 0)(__VA_ARGS__)
+                                                                                                                                    ^
+7 warnings generated.
+Linking C executable cmTC_feb9a
+/usr/local/Cellar/cmake/3.22.1/bin/cmake -E cmake_link_script CMakeFiles/cmTC_feb9a.dir/link.txt --verbose=1
+/usr/local/bin/cilk_stuff/bin/clang  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_feb9a.dir/CheckIncludeFile.c.o -o cmTC_feb9a 
+
+
+
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD succeeded with the following output:
+Change Dir: /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_d5c89/fast && /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_d5c89.dir/build.make CMakeFiles/cmTC_d5c89.dir/build
+Building C object CMakeFiles/cmTC_d5c89.dir/src.c.o
+/usr/local/bin/cilk_stuff/bin/clang -DCMAKE_HAVE_LIBC_PTHREAD  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -MD -MT CMakeFiles/cmTC_d5c89.dir/src.c.o -MF CMakeFiles/cmTC_d5c89.dir/src.c.o.d -o CMakeFiles/cmTC_d5c89.dir/src.c.o -c /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp/src.c
+In file included from /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp/src.c:1:
+/usr/local/include/pthread.h:328:6: warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if !_PTHREAD_SWIFT_IMPORTER_NULLABILITY_COMPAT
+     ^
+/usr/local/include/pthread.h:197:2: note: expanded from macro '_PTHREAD_SWIFT_IMPORTER_NULLABILITY_COMPAT'
+        defined(SWIFT_CLASS_EXTRA) && (!defined(SWIFT_SDK_OVERLAY_PTHREAD_EPOCH) || (SWIFT_SDK_OVERLAY_PTHREAD_EPOCH < 1))
+        ^
+/usr/local/include/pthread.h:328:6: warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+/usr/local/include/pthread.h:197:34: note: expanded from macro '_PTHREAD_SWIFT_IMPORTER_NULLABILITY_COMPAT'
+        defined(SWIFT_CLASS_EXTRA) && (!defined(SWIFT_SDK_OVERLAY_PTHREAD_EPOCH) || (SWIFT_SDK_OVERLAY_PTHREAD_EPOCH < 1))
+                                        ^
+/usr/local/include/pthread.h:537:6: warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+#if !_PTHREAD_SWIFT_IMPORTER_NULLABILITY_COMPAT
+     ^
+/usr/local/include/pthread.h:197:2: note: expanded from macro '_PTHREAD_SWIFT_IMPORTER_NULLABILITY_COMPAT'
+        defined(SWIFT_CLASS_EXTRA) && (!defined(SWIFT_SDK_OVERLAY_PTHREAD_EPOCH) || (SWIFT_SDK_OVERLAY_PTHREAD_EPOCH < 1))
+        ^
+/usr/local/include/pthread.h:537:6: warning: macro expansion producing 'defined' has undefined behavior [-Wexpansion-to-defined]
+/usr/local/include/pthread.h:197:34: note: expanded from macro '_PTHREAD_SWIFT_IMPORTER_NULLABILITY_COMPAT'
+        defined(SWIFT_CLASS_EXTRA) && (!defined(SWIFT_SDK_OVERLAY_PTHREAD_EPOCH) || (SWIFT_SDK_OVERLAY_PTHREAD_EPOCH < 1))
+                                        ^
+/usr/local/include/pthread.h:560:1: warning: unknown platform 'driverkit' in availability macro [-Wavailability]
+__API_UNAVAILABLE(ios, tvos, watchos, driverkit)
+^
+/usr/local/include/Availability.h:419:133: note: expanded from macro '__API_UNAVAILABLE'
+    #define __API_UNAVAILABLE(...) __API_UNAVAILABLE_GET_MACRO(__VA_ARGS__,__API_UNAVAILABLE7,__API_UNAVAILABLE6,__API_UNAVAILABLE5,__API_UNAVAILABLE4,__API_UNAVAILABLE3,__API_UNAVAILABLE2,__API_UNAVAILABLE1, 0)(__VA_ARGS__)
+                                                                                                                                    ^
+In file included from /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp/src.c:1:
+/usr/local/include/pthread.h:564:1: warning: unknown platform 'driverkit' in availability macro [-Wavailability]
+__API_UNAVAILABLE(ios, tvos, watchos, driverkit)
+^
+/usr/local/include/Availability.h:419:133: note: expanded from macro '__API_UNAVAILABLE'
+    #define __API_UNAVAILABLE(...) __API_UNAVAILABLE_GET_MACRO(__VA_ARGS__,__API_UNAVAILABLE7,__API_UNAVAILABLE6,__API_UNAVAILABLE5,__API_UNAVAILABLE4,__API_UNAVAILABLE3,__API_UNAVAILABLE2,__API_UNAVAILABLE1, 0)(__VA_ARGS__)
+                                                                                                                                    ^
+In file included from /Users/isabelrosa/Downloads/meng/build2/CMakeFiles/CMakeTmp/src.c:1:
+/usr/local/include/pthread.h:663:1: warning: unknown platform 'driverkit' in availability macro [-Wavailability]
+__API_UNAVAILABLE(ios, tvos, watchos, driverkit)
+^
+/usr/local/include/Availability.h:419:133: note: expanded from macro '__API_UNAVAILABLE'
+    #define __API_UNAVAILABLE(...) __API_UNAVAILABLE_GET_MACRO(__VA_ARGS__,__API_UNAVAILABLE7,__API_UNAVAILABLE6,__API_UNAVAILABLE5,__API_UNAVAILABLE4,__API_UNAVAILABLE3,__API_UNAVAILABLE2,__API_UNAVAILABLE1, 0)(__VA_ARGS__)
+                                                                                                                                    ^
+7 warnings generated.
+Linking C executable cmTC_d5c89
+/usr/local/Cellar/cmake/3.22.1/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d5c89.dir/link.txt --verbose=1
+/usr/local/bin/cilk_stuff/bin/clang  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_d5c89.dir/src.c.o -o cmTC_d5c89 
+
+
+Source file was:
+#include <pthread.h>
+
+static void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
