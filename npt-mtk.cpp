@@ -2,12 +2,14 @@
 #include <iostream>
 #include <array>
 #include <vector>
+#include <chrono>
 #include <torch/script.h>
 #include <cleri/cleri.h>
 #include <cilk/cilk.h>
 #include "extxyz/libextxyz/extxyz_kv_grammar.h"
 #include "extxyz/libextxyz/extxyz_kv_grammar.c"
 #include "extxyz/libextxyz/extxyz.h"
+using namespace std::chrono;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -591,6 +593,7 @@ void  trapezoid(torch::jit::script::Module module,
 	              z_right_cut);
 	    std::cout << "done right trap" << std::endl;
 	    cilk_sync;
+	    // cilk_sync;
             // std::cout << "poses of left trap, t0: " << t0 << ", t1: " << t1 << std::endl;
             // for (int i = 0; i < nattbelow_x; i++) {
             //     std::cout << i << ": " << atoms_left_final[i * 3 + 0] << ", " << atoms_left_final[i * 3 + 1] << ", " << atoms_left_final[i * 3 + 2] << std::endl;
@@ -814,10 +817,10 @@ void  trapezoid(torch::jit::script::Module module,
 	    		    // so actually i think this is okay
                                 edges_ret[nat_merged] = 1;
 	    		}
-	    		if (edges_ret[nat_merged] % 2 == 0) {
+	    		while (edges_ret[nat_merged] % 2 == 0) {
                                 edges_ret[nat_merged] = edges_ret[nat_merged] / 2;
 	    		}
-	    		if (edges_ret[nat_merged] % 3 == 0) {
+	    		while (edges_ret[nat_merged] % 3 == 0) {
                                 edges_ret[nat_merged] = edges_ret[nat_merged] / 3;
 	    		}
 	    		if (edges_ret[nat_merged] == -1) {
@@ -957,7 +960,7 @@ void  trapezoid(torch::jit::script::Module module,
 	// }
 	// std::cout << "nat below y ave top: " << nat_below_y_ave_top << std::endl;
 	// std::cout << "nat above y ave top: " << nat_above_y_ave_top << std::endl;
-	// if (nat_below_y_ave_top >= 150 /*arbitrary, should change*/ && nat_above_y_ave_top >= 150) {
+	// if (nat_below_y_ave_top >= 100 /*arbitrary, should change*/ && nat_above_y_ave_top >= 100) {
         //     // wide enough in y dim
         //     std::cout << "DOING Y SPACE CUT-------------------------------------------------------" << std::endl;
 	//     std::cout << "recursing left trap, nat below: " << nat_below_y << std::endl;
@@ -1233,10 +1236,10 @@ void  trapezoid(torch::jit::script::Module module,
 	//     	                // so actually i think this is okay
         //                         edges_ret[nat_merged] = 1;
 	//     	            }
-	//     	            if (edges_ret[nat_merged] % 5 == 0) {
+	//     	            while (edges_ret[nat_merged] % 5 == 0) {
         //                         edges_ret[nat_merged] = edges_ret[nat_merged] / 5;
 	//     	            }
-	//     	            if (edges_ret[nat_merged] % 7 == 0) {
+	//     	            while (edges_ret[nat_merged] % 7 == 0) {
         //                         edges_ret[nat_merged] = edges_ret[nat_merged] / 7;
 	//     	            }
 	//     	            if (edges_ret[nat_merged] == -1) {
@@ -1625,6 +1628,7 @@ int main(int argc, char** argv)
     std::cout << "starting zoid lol" << std::endl;
     std::cout << "num steps again: " << num_steps << std::endl;
     // module.eval();
+    auto start = high_resolution_clock::now();
     float* atoms_answer = new float[real_nat];
     int* atoms_types = new int[real_nat];
     int* atoms_times = new int[real_nat];
@@ -1653,216 +1657,227 @@ int main(int argc, char** argv)
               false,
               false,
               false);
+    auto stop = high_resolution_clock::now();
     std::cout << "ZOID DONE ------------------------------------------------------------------" << std::endl;
+    auto duration = duration_cast<milliseconds>(stop - start);
 
-    // nat = real_nat;
-    // pos_param = torch::from_blob(atoms1, {nat, 3}).to(torch::kFloat);
-    // AtomGraph system(pos_param, nat, 3.0);
-    // torch::Tensor edges = system.edges();
-    // dictionary.insert("edge_index", edges);
-    // std::cout << "Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
-    // dictionary.insert("pos", pos_param);
-    // auto options = torch::TensorOptions().dtype(torch::kInt32);
-    // torch::Tensor t = torch::from_blob(atom_types1, {nat, 1}, options=options).to(torch::kInt64);
-    // dictionary.insert("atom_types", t);
-    // torch::Tensor t3 = torch::randint(0, 1, {nat}).to(torch::kLong);
-    // dictionary.insert("batch", t3);
-    // inputs.push_back(dictionary);
+    auto start2 = high_resolution_clock::now();
+    nat = real_nat;
+    pos_param = torch::from_blob(atoms1, {nat, 3}).to(torch::kFloat);
+    AtomGraph system(pos_param, nat, 3.0);
+    torch::Tensor edges = system.edges();
+    dictionary.insert("edge_index", edges);
+    std::cout << "Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
+    dictionary.insert("pos", pos_param);
+    auto options = torch::TensorOptions().dtype(torch::kInt32);
+    torch::Tensor t = torch::from_blob(atom_types1, {nat, 1}, options=options).to(torch::kInt64);
+    dictionary.insert("atom_types", t);
+    torch::Tensor t3 = torch::randint(0, 1, {nat}).to(torch::kLong);
+    dictionary.insert("batch", t3);
+    inputs.push_back(dictionary);
 
-    // // Execute the model and turn its output into a tensor.
-    // // module.eval();
-    // std::cout << "before forward" << std::endl;
-    // auto output = module(inputs).toGenericDict();
-    // std::cout << "after forward" << std::endl;
+    // Execute the model and turn its output into a tensor.
+    // module.eval();
+    std::cout << "before forward" << std::endl;
+    auto output = module(inputs).toGenericDict();
+    std::cout << "after forward" << std::endl;
 
-    // std::cout << "keys\n--------------------------------------------------------" << std::endl;
-    // for (auto it = output.begin(); it!=output.end(); it++) {
-    //     std::cout << it->key() << std::endl;
+    std::cout << "keys\n--------------------------------------------------------" << std::endl;
+    for (auto it = output.begin(); it!=output.end(); it++) {
+        std::cout << it->key() << std::endl;
+    }
+    std::cout << "keysdone\n--------------------------------------------------------" << std::endl;
+    // size: (1857, 3)
+    torch::Tensor forces_tensor = output.at("forces").toTensor().detach();
+    // std::cout << "FORCES" << std::endl;
+    // for (int i = 0; i < nat; i++) {
+    //     std::cout << i << ": " << forces_tensor[i][0] << ", " << forces_tensor[i][1] << ", " << forces_tensor[i][2] << std::endl;
     // }
-    // std::cout << "keysdone\n--------------------------------------------------------" << std::endl;
-    // // size: (1857, 3)
-    // torch::Tensor forces_tensor = output.at("forces").toTensor().detach();
-    // // std::cout << "FORCES" << std::endl;
-    // // for (int i = 0; i < nat; i++) {
-    // //     std::cout << i << ": " << forces_tensor[i][0] << ", " << forces_tensor[i][1] << ", " << forces_tensor[i][2] << std::endl;
-    // // }
-    // torch::Tensor total_energy_tensor = output.at("total_energy").toTensor();
-    // torch::Tensor atomic_energy_tensor = output.at("atomic_energy").toTensor();
-    // // std::cout << "energy dim: " << atomic_energy_tensor.dim() << std::endl;
-    // // std::cout << "energy dim: " << atomic_energy_tensor.size(0) << ", " << atomic_energy_tensor.size(1) << std::endl;
-    // // std::cout << "ENERGIES" << std::endl;
-    // // for (int i = 0; i < nat; i++) {
-    // //     std::cout << i << ": " << atomic_energy_tensor[i][0] << std::endl;
-    // // }
-    // // auto atomic_energies = atomic_energy_tensor.accessor<float, 2>();
-    // float atomic_energy_sum = atomic_energy_tensor.sum().data_ptr<float>()[0];
-    // std::cout << "Atomic energy sum: " << atomic_energy_sum << std::endl;
-
-    // for (int step = 0; step < num_steps; step++) {
-    //     torch::Tensor new_pos = output.at("pos").toTensor().detach();
-
-    //     // physics stuff
-    //     float temp = 300.0;
-    //     float nvt_q = 334.0;
-    //     float dt = 0.5 * pow(10, -15); //femtoseconds?
-    //     float dtdt = pow(dt, 2);
-    //     float nvt_bath = 0.0;
-    //     torch::Tensor atom_types = output.at("atom_types").toTensor();
-    //     // std::cout << "atom types: (" << atom_types.size(0) << ", " << atom_types.size(1) << ")" << std::endl;
-    //     float atom_masses[nat];
-    //     for (int i = 0; i < nat; i++) {
-    //         int atom_type = atom_types[i][0].item<int>();
-    //         if (atom_type == 0) {
-    //             atom_masses[i] = 178.49;
-    //         } else {
-    //             atom_masses[i] = 15.999;
-    //         }
-    //     }
-    //     float velocities[nat][3];
-    //     memset(velocities, 0, nat*3*sizeof(float));
-    //     float modified_acc[nat][3];
-    //     for (int i = 0; i < nat; i++) {
-    //         for (int j = 0; j < 3; j++) {
-    //             modified_acc[i][j] = forces_tensor[i][j].item<float>() / atom_masses[i] - nvt_bath * velocities[i][j];
-    //             if (modified_acc[i][j] != modified_acc[i][j]) {
-    //                 modified_acc[i][j] = 0;
-    //             }
-    //         }
-    //     }
-    //     float pos_fullstep[nat][3];
-    //     for (int i = 0; i < nat; i++) {
-    //         for (int j = 0; j < 3; j++) {
-    //             pos_fullstep[i][j] = new_pos[i][j].item<float>() + dt * velocities[i][j] + 0.5 * dtdt * modified_acc[i][j];
-    //             if (pos_fullstep[i][j] != pos_fullstep[i][j]) {
-    //                 pos_fullstep[i][j] = new_pos[i][j].item<float>();
-    //             }
-    //         }
-    //     }
-    //     float vel_halfstep[nat][3];
-    //     for (int i = 0; i < nat; i++) {
-    //         for (int j = 0; j < 3; j++) {
-    //             vel_halfstep[i][j] = velocities[i][j] + 0.5 * dt * modified_acc[i][j];
-    //             if (vel_halfstep[i][j] != vel_halfstep[i][j]) {
-    //                 vel_halfstep[i][j] = 0;
-    //             }
-    //         }
-    //     }
-    //     torch::Tensor pos_updated_after_physics = torch::from_blob(pos_fullstep, {nat, 3});
-    //     float kB = 1.380649 * pow(10, -4) / 1.602176634;
-    //     float e_kin_sum = 0;
-    //     for (int i = 0; i < nat; i++) {
-    //         float vel_sq_sum = 0;
-    //         for (int j = 0; j < 3; j++) {
-    //             vel_sq_sum += velocities[i][j] * velocities[i][j];
-    //         }
-    //         e_kin_sum += vel_sq_sum * atom_masses[i];
-    //     }
-    //     float e_kin_diff = 0.5 * (e_kin_sum - (3 * nat + 1) * kB * temp);
-    //     float nvt_bath_halfstep = nvt_bath + 0.5 * dt * e_kin_diff / nvt_q;
-    //     float e_kin_sum_halfstep = 0;
-    //     for (int i = 0; i < nat; i++) {
-    //         float vel_sq_sum_halfstep = 0;
-    //         for (int j = 0; j < 3; j++) {
-    //             vel_sq_sum_halfstep += vel_halfstep[i][j] * vel_halfstep[i][j];
-    //         }
-    //         e_kin_sum += vel_sq_sum_halfstep * atom_masses[i];
-    //     }
-    //     float e_kin_diff_halfstep = 0.5 * (e_kin_sum_halfstep - (3 * nat + 1) * kB * temp);
-    //     nvt_bath = nvt_bath_halfstep + 0.5 * dt * e_kin_diff_halfstep / nvt_q;
-    //     for (int i = 0; i < nat; i++) {
-    //         for (int j = 0; j < 3; j++) {
-    //             velocities[i][j] = vel_halfstep[i][j] + 0.5 * dt * (forces_tensor[i][j].item<float>() / atom_masses[i]);
-    //         }
-    //     }
-
-
-    //     std::vector<torch::jit::IValue> inputs2;
-    //     torch::Dict<std::string, torch::Tensor> dictionary2;
-
-    //     // for (DictEntry *entry = arrays; entry; entry = entry->next) {
-    //     //     int cols = 1;
-    //     //     if (entry->ncols != 0) {
-    //     //         cols = entry->ncols;
-    //     //     }
-
-    //     //     std::string str1 (entry->key);
-    //     //     if (entry->data_t == data_s) {
-    //     //         int arr[cols];
-    //     //         for (int j=0; j<cols; j++) {
-    //     //             std::string type(((char**) (entry->data))[j]);
-    //     //             if (type == "Hf") {
-    //     //                 arr[j] = 0;
-    //     //             } else if (type == "O") {
-    //     //                 arr[j] = 1;
-    //     //             }
-    //     //         }
-    //     //         auto options = torch::TensorOptions().dtype(torch::kInt32);
-    //     //         torch::Tensor t = torch::from_blob(arr, {cols, 1}, options=options).to(torch::kInt64);
-    //     //         dictionary2.insert("atom_types", t);
-
-    //     //     }
-    //     // }
-
-    //     AtomGraph system(pos_updated_after_physics, nat, 3.0);
-    //     torch::Tensor edges = system.edges();
-    //     dictionary2.insert("edge_index", edges);
-    //     std::cout << "step: " << step << ", Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
-    //     dictionary2.insert("pos", pos_updated_after_physics);
-    //     auto options = torch::TensorOptions().dtype(torch::kInt32);
-    //     torch::Tensor t_2 = torch::from_blob(atom_types1, {nat, 1}, options=options).to(torch::kInt64);
-    //     dictionary2.insert("atom_types", t_2);
-    //     torch::Tensor t3_2 = torch::randint(0, 1, {nat}).to(torch::kLong);
-    //     dictionary2.insert("batch", t3_2);
-    //     inputs2.push_back(dictionary2);
-
-    //     // Execute the model and turn its output into a tensor.
-    //     // module.eval();
-    //     std::cout << "step: " << step << ", before forward" << std::endl;
-    //     auto output2 = module(inputs2).toGenericDict();
-    //     // auto output2 = module.forward(inputs2).toGenericDict();
-    //     std::cout << "step: " << step << ", after forward" << std::endl;
-
-    //     // std::cout << "SECOND TIME keys\n--------------------------------------------------------" << std::endl;
-    //     // for (auto it = output2.begin(); it!=output2.end(); it++) {
-    //     //     std::cout << it->key() << std::endl;
-    //     // }
-    //     // std::cout << "SECOND TIME keysdone\n--------------------------------------------------------" << std::endl;
-    //     // size: (1857, 3)
-    //     torch::Tensor forces_tensor2 = output2.at("forces").toTensor();
-    //     // std::cout << "SECOND TIME FORCES" << std::endl;
-    //     // for (int i = 0; i < nat; i++) {
-    //     //     std::cout << i << ": " << forces_tensor2[i][0] << ", " << forces_tensor2[i][1] << ", " << forces_tensor2[i][2] << std::endl;
-    //     // }
-    //     torch::Tensor total_energy_tensor2 = output2.at("total_energy").toTensor();
-    //     torch::Tensor atomic_energy_tensor2 = output2.at("atomic_energy").toTensor();
-    //     // std::cout << "SECOND TIME energy dim: " << atomic_energy_tensor2.dim() << std::endl;
-    //     // std::cout << "SECOND TIME energy dim: " << atomic_energy_tensor2.size(0) << ", " << atomic_energy_tensor2.size(1) << std::endl;
-    //     // std::cout << "SECOND TIME ENERGIES" << std::endl;
-    //     // for (int i = 0; i < nat; i++) {
-    //     //     std::cout << i << ": " << atomic_energy_tensor2[i][0] << std::endl;
-    //     // }
-    //     // auto atomic_energies = atomic_energy_tensor.accessor<float, 2>();
-    //     float atomic_energy_sum2 = atomic_energy_tensor2.sum().data_ptr<float>()[0];
-    //     std::cout << "step: " << step << ", Atomic energy sum: " << atomic_energy_sum2 << std::endl;
-    //     // torch::Tensor poses_final = output2.at("pos").toTensor();
-    //     // float sum_min_dist = 0;
-    //     // float max_min_dist = 0;
-    //     // for (int i = 0; i < nat; i++) {
-    //     //     std::cout << i << ": " << poses_final[i][0].item<float>() << ", " << poses_final[i][1].item<float>() << ", " << poses_final[i][2].item<float>() << std::endl;
-    //     //     float min_dist = (poses_final[i][0].item<float>() - atoms_answer[i * 3 + 0]) * (poses_final[i][0].item<float>() - atoms_answer[i * 3 + 0]) + (poses_final[i][1].item<float>() - atoms_answer[i * 3 + 1]) * (poses_final[i][1].item<float>() - atoms_answer[i * 3 + 1]) + (poses_final[i][2].item<float>() - atoms_answer[i * 3 + 2]) * (poses_final[i][2].item<float>() - atoms_answer[i * 3 + 2]);
-    //     //     for (int j = 0; j < nat; j++) {
-    //     //         float min_dist2 = (poses_final[i][0].item<float>() - atoms_answer[j * 3 + 0]) * (poses_final[i][0].item<float>() - atoms_answer[j * 3 + 0]) + (poses_final[i][1].item<float>() - atoms_answer[j * 3 + 1]) * (poses_final[i][1].item<float>() - atoms_answer[j * 3 + 1]) + (poses_final[i][2].item<float>() - atoms_answer[j * 3 + 2]) * (poses_final[i][2].item<float>() - atoms_answer[j * 3 + 2]);
-    //     // 	min_dist = std::min(min_dist, min_dist2);
-    //     //         // std::cout << i << ": " << atoms_answer[i * 3 + 0] << ", " << atoms_answer[i * 3 + 1] << ", " << atoms_answer[i * 3 + 2] << std::endl;
-    //     //     }
-    //     //     sum_min_dist += min_dist;
-    //     //     max_min_dist = std::max(max_min_dist, min_dist);
-    //     //     // std::cout << i << " min dist: " << min_dist << std::endl;
-    //     // }
-    //     // float ave_min_dist = sum_min_dist / nat;
-    //     // std::cout << "ave min dist: " << ave_min_dist << std::endl;
-    //     // std::cout << "max min dist: " << max_min_dist << std::endl;
+    torch::Tensor total_energy_tensor = output.at("total_energy").toTensor();
+    torch::Tensor atomic_energy_tensor = output.at("atomic_energy").toTensor();
+    // std::cout << "energy dim: " << atomic_energy_tensor.dim() << std::endl;
+    // std::cout << "energy dim: " << atomic_energy_tensor.size(0) << ", " << atomic_energy_tensor.size(1) << std::endl;
+    // std::cout << "ENERGIES" << std::endl;
+    // for (int i = 0; i < nat; i++) {
+    //     std::cout << i << ": " << atomic_energy_tensor[i][0] << std::endl;
     // }
+    // auto atomic_energies = atomic_energy_tensor.accessor<float, 2>();
+    float atomic_energy_sum = atomic_energy_tensor.sum().data_ptr<float>()[0];
+    std::cout << "Atomic energy sum: " << atomic_energy_sum << std::endl;
+
+    for (int step = 0; step < num_steps; step++) {
+        torch::Tensor new_pos = output.at("pos").toTensor().detach();
+
+        // physics stuff
+        float temp = 300.0;
+        float nvt_q = 334.0;
+        float dt = 0.5 * pow(10, -15); //femtoseconds?
+        float dtdt = pow(dt, 2);
+        float nvt_bath = 0.0;
+        torch::Tensor atom_types = output.at("atom_types").toTensor();
+        // std::cout << "atom types: (" << atom_types.size(0) << ", " << atom_types.size(1) << ")" << std::endl;
+        float atom_masses[nat];
+        for (int i = 0; i < nat; i++) {
+            int atom_type = atom_types[i][0].item<int>();
+            if (atom_type == 0) {
+                atom_masses[i] = 178.49;
+            } else {
+                atom_masses[i] = 15.999;
+            }
+        }
+        float velocities[nat][3];
+        memset(velocities, 0, nat*3*sizeof(float));
+        float modified_acc[nat][3];
+        for (int i = 0; i < nat; i++) {
+            for (int j = 0; j < 3; j++) {
+                modified_acc[i][j] = forces_tensor[i][j].item<float>() / atom_masses[i] - nvt_bath * velocities[i][j];
+                if (modified_acc[i][j] != modified_acc[i][j]) {
+                    modified_acc[i][j] = 0;
+                }
+            }
+        }
+        float pos_fullstep[nat][3];
+        for (int i = 0; i < nat; i++) {
+            for (int j = 0; j < 3; j++) {
+                pos_fullstep[i][j] = new_pos[i][j].item<float>() + dt * velocities[i][j] + 0.5 * dtdt * modified_acc[i][j];
+                if (pos_fullstep[i][j] != pos_fullstep[i][j]) {
+                    pos_fullstep[i][j] = new_pos[i][j].item<float>();
+                }
+            }
+        }
+        float vel_halfstep[nat][3];
+        for (int i = 0; i < nat; i++) {
+            for (int j = 0; j < 3; j++) {
+                vel_halfstep[i][j] = velocities[i][j] + 0.5 * dt * modified_acc[i][j];
+                if (vel_halfstep[i][j] != vel_halfstep[i][j]) {
+                    vel_halfstep[i][j] = 0;
+                }
+            }
+        }
+        torch::Tensor pos_updated_after_physics = torch::from_blob(pos_fullstep, {nat, 3});
+        float kB = 1.380649 * pow(10, -4) / 1.602176634;
+        float e_kin_sum = 0;
+        for (int i = 0; i < nat; i++) {
+            float vel_sq_sum = 0;
+            for (int j = 0; j < 3; j++) {
+                vel_sq_sum += velocities[i][j] * velocities[i][j];
+            }
+            e_kin_sum += vel_sq_sum * atom_masses[i];
+        }
+        float e_kin_diff = 0.5 * (e_kin_sum - (3 * nat + 1) * kB * temp);
+        float nvt_bath_halfstep = nvt_bath + 0.5 * dt * e_kin_diff / nvt_q;
+        float e_kin_sum_halfstep = 0;
+        for (int i = 0; i < nat; i++) {
+            float vel_sq_sum_halfstep = 0;
+            for (int j = 0; j < 3; j++) {
+                vel_sq_sum_halfstep += vel_halfstep[i][j] * vel_halfstep[i][j];
+            }
+            e_kin_sum += vel_sq_sum_halfstep * atom_masses[i];
+        }
+        float e_kin_diff_halfstep = 0.5 * (e_kin_sum_halfstep - (3 * nat + 1) * kB * temp);
+        nvt_bath = nvt_bath_halfstep + 0.5 * dt * e_kin_diff_halfstep / nvt_q;
+        for (int i = 0; i < nat; i++) {
+            for (int j = 0; j < 3; j++) {
+                velocities[i][j] = vel_halfstep[i][j] + 0.5 * dt * (forces_tensor[i][j].item<float>() / atom_masses[i]);
+            }
+        }
+
+
+        std::vector<torch::jit::IValue> inputs2;
+        torch::Dict<std::string, torch::Tensor> dictionary2;
+
+        // for (DictEntry *entry = arrays; entry; entry = entry->next) {
+        //     int cols = 1;
+        //     if (entry->ncols != 0) {
+        //         cols = entry->ncols;
+        //     }
+
+        //     std::string str1 (entry->key);
+        //     if (entry->data_t == data_s) {
+        //         int arr[cols];
+        //         for (int j=0; j<cols; j++) {
+        //             std::string type(((char**) (entry->data))[j]);
+        //             if (type == "Hf") {
+        //                 arr[j] = 0;
+        //             } else if (type == "O") {
+        //                 arr[j] = 1;
+        //             }
+        //         }
+        //         auto options = torch::TensorOptions().dtype(torch::kInt32);
+        //         torch::Tensor t = torch::from_blob(arr, {cols, 1}, options=options).to(torch::kInt64);
+        //         dictionary2.insert("atom_types", t);
+
+        //     }
+        // }
+
+        AtomGraph system(pos_updated_after_physics, nat, 3.0);
+        torch::Tensor edges = system.edges();
+        dictionary2.insert("edge_index", edges);
+        std::cout << "step: " << step << ", Edge dim 0: " << edges.size(0) << ", dim 1: " << edges.size(1) << std::endl;
+        dictionary2.insert("pos", pos_updated_after_physics);
+        auto options = torch::TensorOptions().dtype(torch::kInt32);
+        torch::Tensor t_2 = torch::from_blob(atom_types1, {nat, 1}, options=options).to(torch::kInt64);
+        dictionary2.insert("atom_types", t_2);
+        torch::Tensor t3_2 = torch::randint(0, 1, {nat}).to(torch::kLong);
+        dictionary2.insert("batch", t3_2);
+        inputs2.push_back(dictionary2);
+
+        // Execute the model and turn its output into a tensor.
+        // module.eval();
+        std::cout << "step: " << step << ", before forward" << std::endl;
+        auto output2 = module(inputs2).toGenericDict();
+        // auto output2 = module.forward(inputs2).toGenericDict();
+        std::cout << "step: " << step << ", after forward" << std::endl;
+
+        // std::cout << "SECOND TIME keys\n--------------------------------------------------------" << std::endl;
+        // for (auto it = output2.begin(); it!=output2.end(); it++) {
+        //     std::cout << it->key() << std::endl;
+        // }
+        // std::cout << "SECOND TIME keysdone\n--------------------------------------------------------" << std::endl;
+        // size: (1857, 3)
+        torch::Tensor forces_tensor2 = output2.at("forces").toTensor();
+        // std::cout << "SECOND TIME FORCES" << std::endl;
+        // for (int i = 0; i < nat; i++) {
+        //     std::cout << i << ": " << forces_tensor2[i][0] << ", " << forces_tensor2[i][1] << ", " << forces_tensor2[i][2] << std::endl;
+        // }
+        torch::Tensor total_energy_tensor2 = output2.at("total_energy").toTensor();
+        torch::Tensor atomic_energy_tensor2 = output2.at("atomic_energy").toTensor();
+        // std::cout << "SECOND TIME energy dim: " << atomic_energy_tensor2.dim() << std::endl;
+        // std::cout << "SECOND TIME energy dim: " << atomic_energy_tensor2.size(0) << ", " << atomic_energy_tensor2.size(1) << std::endl;
+        // std::cout << "SECOND TIME ENERGIES" << std::endl;
+        // for (int i = 0; i < nat; i++) {
+        //     std::cout << i << ": " << atomic_energy_tensor2[i][0] << std::endl;
+        // }
+        // auto atomic_energies = atomic_energy_tensor.accessor<float, 2>();
+        float atomic_energy_sum2 = atomic_energy_tensor2.sum().data_ptr<float>()[0];
+        std::cout << "step: " << step << ", Atomic energy sum: " << atomic_energy_sum2 << std::endl;
+        // torch::Tensor poses_final = output2.at("pos").toTensor();
+        // float sum_min_dist = 0;
+        // float max_min_dist = 0;
+        // for (int i = 0; i < nat; i++) {
+        //     std::cout << i << ": " << poses_final[i][0].item<float>() << ", " << poses_final[i][1].item<float>() << ", " << poses_final[i][2].item<float>() << std::endl;
+        //     float min_dist = (poses_final[i][0].item<float>() - atoms_answer[i * 3 + 0]) * (poses_final[i][0].item<float>() - atoms_answer[i * 3 + 0]) + (poses_final[i][1].item<float>() - atoms_answer[i * 3 + 1]) * (poses_final[i][1].item<float>() - atoms_answer[i * 3 + 1]) + (poses_final[i][2].item<float>() - atoms_answer[i * 3 + 2]) * (poses_final[i][2].item<float>() - atoms_answer[i * 3 + 2]);
+        //     for (int j = 0; j < nat; j++) {
+        //         float min_dist2 = (poses_final[i][0].item<float>() - atoms_answer[j * 3 + 0]) * (poses_final[i][0].item<float>() - atoms_answer[j * 3 + 0]) + (poses_final[i][1].item<float>() - atoms_answer[j * 3 + 1]) * (poses_final[i][1].item<float>() - atoms_answer[j * 3 + 1]) + (poses_final[i][2].item<float>() - atoms_answer[j * 3 + 2]) * (poses_final[i][2].item<float>() - atoms_answer[j * 3 + 2]);
+        // 	min_dist = std::min(min_dist, min_dist2);
+        //         // std::cout << i << ": " << atoms_answer[i * 3 + 0] << ", " << atoms_answer[i * 3 + 1] << ", " << atoms_answer[i * 3 + 2] << std::endl;
+        //     }
+        //     sum_min_dist += min_dist;
+        //     max_min_dist = std::max(max_min_dist, min_dist);
+        //     // std::cout << i << " min dist: " << min_dist << std::endl;
+        // }
+        // float ave_min_dist = sum_min_dist / nat;
+        // std::cout << "ave min dist: " << ave_min_dist << std::endl;
+        // std::cout << "max min dist: " << max_min_dist << std::endl;
+    }
+    auto stop2 = high_resolution_clock::now();
+    auto duration2 = duration_cast<milliseconds>(stop2 - start2);
+    auto trap_time = ((float)(duration.count())) / 1000.0;
+    auto loop_time = ((float)(duration2.count())) / 1000.0;
+    std::cout << "trap time: " << trap_time << std::endl;
+    std::cout << "looping time: " << loop_time << std::endl;
+    auto pct = ((float)(loop_time-trap_time)) / ((float) loop_time);
+    std::cout << "pct speedup: " << pct << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
