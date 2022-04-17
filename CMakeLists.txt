@@ -13,6 +13,6 @@ set_property(TARGET libcleri PROPERTY IMPORTED_LOCATION "/usr/local/lib/libcleri
 
 target_link_libraries(npt-mtk "${TORCH_LIBRARIES}" libextxyz libcleri)
 
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L/usr/local/lib -fopencilk")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -I/usr/local/include -fopencilk")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L/usr/local/lib -fno-exceptions -fopencilk")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -I/usr/local/include -fno-exceptions -fopencilk")
 set_property(TARGET npt-mtk PROPERTY CXX_STANDARD 17)

@@ -211,7 +211,7 @@ void  trapezoid(torch::jit::script::Module module,
         torch::Tensor atom_types = output2.at("atom_types").toTensor().detach();
         // std::cout << "atom types: (" << atom_types.size(0) << ", " << atom_types.size(1) << ")" << std::endl;
         float atom_masses[nat1];
-        for (int i = 0; i < nat1; i++) {
+        cilk_for (int i = 0; i < nat1; i++) {
             int atom_type = atom_types[i][0].item<int>();
             if (atom_type == 0) {
                 atom_masses[i] = 178.49;
@@ -222,7 +222,7 @@ void  trapezoid(torch::jit::script::Module module,
         float velocities[nat1][3];
         memset(velocities, 0, nat1*3*sizeof(float));
         float modified_acc[nat1][3];
-        for (int i = 0; i < nat1; i++) {
+        cilk_for (int i = 0; i < nat1; i++) {
             for (int j = 0; j < 3; j++) {
                 modified_acc[i][j] = forces_tensor[i][j].item<float>() / atom_masses[i] - nvt_bath * velocities[i][j];
                 if (modified_acc[i][j] != modified_acc[i][j]) {
@@ -256,7 +256,7 @@ void  trapezoid(torch::jit::script::Module module,
 	    }
         }
         float vel_halfstep[nat1][3];
-        for (int i = 0; i < nat1; i++) {
+        cilk_for (int i = 0; i < nat1; i++) {
             for (int j = 0; j < 3; j++) {
                 vel_halfstep[i][j] = velocities[i][j] + 0.5 * dt * modified_acc[i][j];
                 if (vel_halfstep[i][j] != vel_halfstep[i][j]) {
@@ -286,7 +286,7 @@ void  trapezoid(torch::jit::script::Module module,
         }
         float e_kin_diff_halfstep = 0.5 * (e_kin_sum_halfstep - (3 * nat1 + 1) * kB * temp);
         nvt_bath = nvt_bath_halfstep + 0.5 * dt * e_kin_diff_halfstep / nvt_q;
-        for (int i = 0; i < nat1; i++) {
+        cilk_for (int i = 0; i < nat1; i++) {
             for (int j = 0; j < 3; j++) {
                 velocities[i][j] = vel_halfstep[i][j] + 0.5 * dt * (forces_tensor[i][j].item<float>() / atom_masses[i]);
             }
@@ -356,7 +356,7 @@ void  trapezoid(torch::jit::script::Module module,
 	}
 	// 3d coords + time step after which it gets cut + atom type
 	// float* to_return = new float[nat1 * 3];
-	for (int i = 0; i < nat1; i++) {
+	cilk_for (int i = 0; i < nat1; i++) {
             atoms_ret[i * 3 + 0] = pos_fullstep[i][0];
             atoms_ret[i * 3 + 1] = pos_fullstep[i][1];
             atoms_ret[i * 3 + 2] = pos_fullstep[i][2];
@@ -504,19 +504,19 @@ void  trapezoid(torch::jit::script::Module module,
 	int* atom_types_above_x = new int[nat1];
 	for (int i = 0; i < nat1; i++) {
             if (atoms1[i * 3 + 0] <= med_x) {
-		    atoms_below_x[nat_below_x * 3 + 0] = atoms1[i * 3 + 0];
-		    atoms_below_x[nat_below_x * 3 + 1] = atoms1[i * 3 + 1];
-		    atoms_below_x[nat_below_x * 3 + 2] = atoms1[i * 3 + 2];
-		    atom_types_below_x[nat_below_x] = atom_types1[i];
+		atoms_below_x[nat_below_x * 3 + 0] = atoms1[i * 3 + 0];
+		atoms_below_x[nat_below_x * 3 + 1] = atoms1[i * 3 + 1];
+		atoms_below_x[nat_below_x * 3 + 2] = atoms1[i * 3 + 2];
+		atom_types_below_x[nat_below_x] = atom_types1[i];
                 nat_below_x++;
 	        if (atoms1[i * 3 + 0] < med_x - delta_t * 3 * 3.0) {
                     nat_below_x_ave_top++;
 	        }
 	    } else {
-		    atoms_above_x[nat_above_x * 3 + 0] = atoms1[i * 3 + 0];
-		    atoms_above_x[nat_above_x * 3 + 1] = atoms1[i * 3 + 1];
-		    atoms_above_x[nat_above_x * 3 + 2] = atoms1[i * 3 + 2];
-		    atom_types_above_x[nat_above_x] = atom_types1[i];
+		atoms_above_x[nat_above_x * 3 + 0] = atoms1[i * 3 + 0];
+		atoms_above_x[nat_above_x * 3 + 1] = atoms1[i * 3 + 1];
+		atoms_above_x[nat_above_x * 3 + 2] = atoms1[i * 3 + 2];
+		atom_types_above_x[nat_above_x] = atom_types1[i];
                 nat_above_x++;
                 if (atoms1[i * 3 + 0] > med_x + delta_t * 3 * 3.0) {
                     nat_above_x_ave_top++;
@@ -628,16 +628,16 @@ void  trapezoid(torch::jit::script::Module module,
                         atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 0] = atom_edges_right_final_pre_pos[j * 3 + 0];
                         atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 1] = atom_edges_right_final_pre_pos[j * 3 + 1];
                         atoms_merged_input[(inac_atoms + nat_this_step) * 3 + 2] = atom_edges_right_final_pre_pos[j * 3 + 2];
-	    	    atom_types_merged_input[inac_atoms + nat_this_step] = atom_types_right_final[j];
+	    	        atom_types_merged_input[inac_atoms + nat_this_step] = atom_types_right_final[j];
                         if (atom_edges_right_final[j] < 0) {
                             // std::cout << i << ": found inaccurate atom" << std::endl;
 	    		inac_atoms++;
 	    	    } else {
-                            // std::cout << i << ": found atom on edge" << std::endl;
-                            atom_edges_output_merged[edges_to_fix * 3 + 0] = atoms_right_final[j * 3 + 0];
-                            atom_edges_output_merged[edges_to_fix * 3 + 1] = atoms_right_final[j * 3 + 1];
-                            atom_edges_output_merged[edges_to_fix * 3 + 2] = atoms_right_final[j * 3 + 2];
-                            // std::cout << i << ": " << atom_edges_output_merged[edges_to_fix * 3 + 0] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 1] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 2] << std::endl;
+                        // std::cout << i << ": found atom on edge" << std::endl;
+                        atom_edges_output_merged[edges_to_fix * 3 + 0] = atoms_right_final[j * 3 + 0];
+                        atom_edges_output_merged[edges_to_fix * 3 + 1] = atoms_right_final[j * 3 + 1];
+                        atom_edges_output_merged[edges_to_fix * 3 + 2] = atoms_right_final[j * 3 + 2];
+                        // std::cout << i << ": " << atom_edges_output_merged[edges_to_fix * 3 + 0] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 1] << ", " << atom_edges_output_merged[edges_to_fix * 3 + 2] << std::endl;
 	    	        nat_this_step++;
 	    		edges_to_fix++;
 	    	    }
@@ -1524,14 +1524,8 @@ void  trapezoid(torch::jit::script::Module module,
 int main(int argc, char** argv)
 {
     torch::jit::script::Module module;
-    try {
-      // Deserialize the ScriptModule from a file using torch::jit::load().
-      module = torch::jit::load(argv[1]);
-    }
-    catch (const c10::Error& e) {
-      std::cerr << "error loading the model\n";
-      return -1;
-    }
+    // Deserialize the ScriptModule from a file using torch::jit::load().
+    module = torch::jit::load(argv[1]);
 
     int num_steps = atoi(argv[3]);
     std::cout << "num steps: " << num_steps << std::endl;

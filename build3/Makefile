@@ -31,9 +31,6 @@ default_target: all
 
 .SUFFIXES: .hpux_make_needs_suffix_list
 
-# Produce verbose output by default.
-VERBOSE = 1
-
 # Command-line flag to silence nested $(MAKE).
 $(VERBOSE)MAKESILENT = -s
 
@@ -63,7 +60,7 @@ EQUALS = =
 CMAKE_SOURCE_DIR = /Users/isabelrosa/Downloads/meng
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/isabelrosa/Downloads/meng/build2
+CMAKE_BINARY_DIR = /Users/isabelrosa/Downloads/meng/build3
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -90,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/isabelrosa/Downloads/meng/build2/CMakeFiles /Users/isabelrosa/Downloads/meng/build2//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/isabelrosa/Downloads/meng/build3/CMakeFiles /Users/isabelrosa/Downloads/meng/build3//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/isabelrosa/Downloads/meng/build2/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/isabelrosa/Downloads/meng/build3/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

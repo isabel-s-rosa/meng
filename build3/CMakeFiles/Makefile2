@@ -57,7 +57,7 @@ EQUALS = =
 CMAKE_SOURCE_DIR = /Users/isabelrosa/Downloads/meng
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/isabelrosa/Downloads/meng/build
+CMAKE_BINARY_DIR = /Users/isabelrosa/Downloads/meng/build3
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -81,14 +81,14 @@ clean: CMakeFiles/npt-mtk.dir/clean
 CMakeFiles/npt-mtk.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/npt-mtk.dir/build.make CMakeFiles/npt-mtk.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/npt-mtk.dir/build.make CMakeFiles/npt-mtk.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/isabelrosa/Downloads/meng/build/CMakeFiles --progress-num=1,2 "Built target npt-mtk"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/isabelrosa/Downloads/meng/build3/CMakeFiles --progress-num=1,2 "Built target npt-mtk"
 .PHONY : CMakeFiles/npt-mtk.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/npt-mtk.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/isabelrosa/Downloads/meng/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/isabelrosa/Downloads/meng/build3/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/npt-mtk.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/isabelrosa/Downloads/meng/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/isabelrosa/Downloads/meng/build3/CMakeFiles 0
 .PHONY : CMakeFiles/npt-mtk.dir/rule
 
 # Convenience name for target.
