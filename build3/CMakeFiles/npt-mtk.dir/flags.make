@@ -6,5 +6,5 @@ CXX_DEFINES = -DUSE_C10D_GLOO -DUSE_DISTRIBUTED -DUSE_RPC -DUSE_TENSORPIPE
 
 CXX_INCLUDES = -isystem /Users/isabelrosa/Downloads/libtorch_2/include -isystem /Users/isabelrosa/Downloads/libtorch_2/include/torch/csrc/api/include
 
-CXX_FLAGS =  -g -I/usr/local/include -fopencilk –fcilktool=cilkscale -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -std=gnu++17
+CXX_FLAGS =  -g -I/usr/local/include -fno-exceptions -fopencilk -fcilktool=cilkscale-benchmark -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -std=gnu++17
 
